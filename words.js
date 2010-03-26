@@ -1,8 +1,8 @@
 // Word segmentation following norvig.com/ngrams
 
 load('utils.js');
-load("vocab.js");
-/// vocab["the"]
+load('vocab.js');
+/// vocab['the']
 //. 23135851162
 
 var NT = 1024908267229;  // Number of tokens
@@ -42,7 +42,7 @@ var segment = memoize(function (string) {
     }
     return best;
 });
-/// segment("iwin").P
+/// segment('iwin').P
 //. 1.917489125744664e-7
-/// segment("iwintheinternetsyayme")
+/// segment('iwintheinternetsyayme')
 //. i,win,the,internets,yay,me
