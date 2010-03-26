@@ -1,3 +1,5 @@
+// Word segmentation following norvig.com/ngrams
+
 load('utils.js');
 load("vocab.js");
 /// vocab["the"]
