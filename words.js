@@ -1,11 +1,10 @@
 // Word segmentation following norvig.com/ngrams
 
 load('utils.js');
-load('vocab.js');
-/// vocab['the']
-//. 23135851162
-
-var NT = 1024908267229;  // Number of tokens
+//load('vocab.js');
+load('count_big.js');
+/// vocab['the'] / NT
+//. 0.07237071748562623
 
 var maxWordLength = (function () {
     var maxlen = 0;
@@ -15,7 +14,7 @@ var maxWordLength = (function () {
     return maxlen;
 })();
 /// maxWordLength
-//. 26
+//. 18
 
 function Pw(word) {
     if (word in vocab)
@@ -24,7 +23,7 @@ function Pw(word) {
         return 10 / (NT * Math.pow(10, word.length));
 }
 /// [Pw('the'), Pw('xzz')]
-//. 0.02257358234074099,9.756970764843732e-15
+//. 0.07237071748562623,9.042948579985785e-9
 
 // Return a list of words such that words.join('') === string, along
 // with its probability. We pick the most-probable such list.
@@ -43,6 +42,6 @@ var segment = memoize(function (string) {
     return best;
 });
 /// segment('iwin').P
-//. 1.917489125744664e-7
+//. 2.3871407260720234e-7
 /// segment('iwintheinternetsyayme')
-//. i,win,the,internets,yay,me
+//. i,win,the,internet,syayme
