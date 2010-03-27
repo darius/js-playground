@@ -2,8 +2,8 @@
 
 load('segment.js');
 
-/// complete('zeus spots ti')
-//. zeus spots tit stops suez
+/// complete('Zeus spots ti')
+//. Zeus spots tit stops suez
 /// complete('Hello there')
 //. Hello there rehtolleh
 /// complete('A man, a plan, a c')
@@ -29,14 +29,14 @@ function extractLetters(string) {
 /// merge('A man,', 'aman a plan')
 //. A man, a plan
 
-// Return a string with the same extractLetters() as :extended,
-// but sharing the capitalization & non-letter characters from :base.
+// Return a string that's like :base on the left and :extended on the
+// right.
 // Pre: extractLetters(extended) starts with extractLetters(base),
-//   and :extended contains only letters and single spaces.
+//   and :extended contains only letters and spaces.
 function merge(base, extended) {
     for (var b = 0, e = 0; b < base.length; ++b)
         if (/[a-z]/i.test(base.charAt(b))) {
-            if (extended.charAt(e) === ' ')
+            while (extended.charAt(e) === ' ')
                 ++e;
             ++e;
         }
