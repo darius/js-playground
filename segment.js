@@ -1,7 +1,6 @@
 // Word segmentation following norvig.com/ngrams
 
-load('utils.js');
-//load('vocab.js');
+load('utils.js');  
 load('count_big.js');
 /// vocab['the'] / NT
 //. 0.07237071748562623
@@ -26,22 +25,22 @@ function Pw(word) {
 //. 0.07237071748562623,9.042948579985785e-9
 
 // Return a list of words such that words.join('') === string, along
-// with its probability. We pick the most-probable such list.
+// with its log-probability. We pick the most-probable such list.
 var segment = memoize(function (string) {
-    function pair(words, P) { words.P = P; return words; }
-    if (!string) return pair([], 1);
-    var best = pair([], 0);
+    function pair(words, logP) { words.logP = logP; return words; }
+    if (!string) return pair([], 0);
+    var best = pair([], -Infinity);
     var limit = Math.min(string.length, maxWordLength);
     for (var i = 1; i <= limit; ++i) {
         var word = string.slice(0, i);
         var result = segment(string.slice(i));
-        var P = Pw(word) * result.P;
-        if (best.P < P)
-            best = pair([word].concat(result), P);
+        var logP = Math.log(Pw(word)) + result.logP;
+        if (best.logP < logP)
+            best = pair([word].concat(result), logP);
     }
     return best;
 });
-/// segment('iwin').P
-//. 2.3871407260720234e-7
+/// segment('iwin').logP
+//. -15.247999350135384
 /// segment('iwintheinternetsyayme')
 //. i,win,the,internet,syayme

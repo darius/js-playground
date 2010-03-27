@@ -18,7 +18,7 @@ function complete(string) {
     var reverse = reverseString(letters);
     var candidates = [segment(letters + reverse),
                       segment(letters + reverse.slice(1))];
-    var palindrome = maximum(candidates, itemgetter('P'));
+    var palindrome = maximum(candidates, itemgetter('logP'));
     return merge(string, palindrome.join(' '));
 }
 
