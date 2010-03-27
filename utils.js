@@ -1,5 +1,5 @@
-function itemgetter(key) {
-    return function (object) { return object[key]; };
+function itemgetter(property) {
+    return function (object) { return object[property]; };
 }
 
 // N.B. The table is a built-in Javascript object, so key lookup 
@@ -11,6 +11,27 @@ function memoize(f) {
             memos[x] = f(x);
         return memos[x];
     };
+}
+
+function maximum(xs, key) {
+    var best = null;
+    for (var i = 0; i < xs.length; ++i)
+        if (!best || key(best) < key(xs[i]))
+            best = xs[i];
+    return best;
+}
+
+function reverseString(string) {
+    var a = arrayFromString(string);
+    a.reverse();
+    return a.join('');
+}
+
+function arrayFromString(string) {
+    var result = [];
+    for (var i = 0; i < string.length; ++i)
+        result.push(string.charAt(i));
+    return result;
 }
 
 function multidictGet(dict, keys) {
