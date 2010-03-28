@@ -1,7 +1,3 @@
-x = [42];
-/// '0' in x
-//. true
-
 load('utils.js');
 
 m = {};
