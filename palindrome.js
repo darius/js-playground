@@ -2,10 +2,12 @@
 
 load('segment.js');
 
+/// complete('star')
+//. star rats
 /// complete('Zeus spots ti')
 //. Zeus spots tit stops suez
 /// complete('Hello there')
-//. Hello there rehtolleh
+//. Hello there erehtolleh
 /// complete('A man, a plan, a c')
 //. A man, a plan, a canal panama
 /// complete('A man, a plan, a')
@@ -15,10 +17,15 @@ load('segment.js');
 // the 'best' one.
 function complete(string) {
     var letters = extractLetters(string);
-    var reverse = reverseString(letters);
-    var candidates = [segment(letters + reverse),
-                      segment(letters + reverse.slice(1))];
-    var palindrome = maximum(candidates, itemgetter('logP'));
+    var srettel = reverseString(letters);
+    // TODO: make segmenting respect wordbreaks in the supplied string
+    var candidates = [segment(letters + srettel),
+                      segment(letters + srettel.slice(1))];
+    function score(words) {
+        // A better result has lower entropy per letter.
+        return words.logP / (extractLetters(words.join('')).length || 1);
+    }
+    var palindrome = maximum(candidates, score);
     return merge(string, palindrome.join(' '));
 }
 
