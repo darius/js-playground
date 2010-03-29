@@ -2,6 +2,8 @@
 
 load('segment.js');
 
+/// complete('Satan, oscillate my')
+//. Satan, oscillate my metallic sonatas
 /// complete('star')
 //. star rats
 /// complete('Zeus spots ti')
