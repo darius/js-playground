@@ -1,0 +1,48 @@
+<html><head>
+  <title>Palindrome me</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head><body>
+  <h1>Yay</h1>
+  <script src="count_big.js"></script>
+  <script src="palindrome.jpp.js"></script>
+
+  <form name="palin" method="get" action="palin.html">
+  <p>Type here.</p>
+  <p>Whee: <input type="text" name="input" id="textfield"/></p>
+  </form>
+
+  <div id="output">...</div>
+
+  <script type="text/javascript">
+    function $(id) {
+      return document.getElementById(id);
+    }
+    function registerEventHandler(node, event, handler) {
+      if (typeof node.addEventListener == "function")
+        node.addEventListener(event, handler, false);
+      else
+        node.attachEvent("on" + event, handler);
+    }
+    function unregisterEventHandler(node, event, handler) {
+      if (typeof node.removeEventListener == "function")
+        node.removeEventListener(event, handler, false);
+      else
+        node.detachEvent("on" + event, handler);
+    }
+
+    var palin = document.forms.palin;
+    var input = palin.elements.input;
+
+    // Total hack alert
+
+    function updateOutput() {
+        $("output").innerHTML = complete(input.value);
+    }
+    function updateOutputSoon(event) {
+        setTimeout(updateOutput, 10);
+    }
+
+    registerEventHandler($("textfield"), "keypress", updateOutputSoon);
+
+  </script>
+</body></html>
