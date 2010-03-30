@@ -5,6 +5,7 @@
   <h1>Yay</h1>
   <script src="count_big.js"></script>
   <script src="palindrome.jpp.js"></script>
+  <script src="dom.js"></script>
 
   <form name="palin" method="get" action="palin.html">
   <p>Type here.</p>
@@ -14,21 +15,6 @@
   <div id="output">...</div>
 
   <script type="text/javascript">
-    function $(id) {
-      return document.getElementById(id);
-    }
-    function registerEventHandler(node, event, handler) {
-      if (typeof node.addEventListener == "function")
-        node.addEventListener(event, handler, false);
-      else
-        node.attachEvent("on" + event, handler);
-    }
-    function unregisterEventHandler(node, event, handler) {
-      if (typeof node.removeEventListener == "function")
-        node.removeEventListener(event, handler, false);
-      else
-        node.detachEvent("on" + event, handler);
-    }
 
     var palin = document.forms.palin;
     var input = palin.elements.input;
