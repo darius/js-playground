@@ -1,7 +1,7 @@
 // Word segmentation following norvig.com/ngrams
 
 load('utils.js');  
-load('count_big.js');
+load('count_big.js'); //* skip
 /// vocab['the'] / NT
 //. 0.07237071748562623
 
