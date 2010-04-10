@@ -2,6 +2,8 @@
 
 load('segment.js');
 
+/// complete('a tylenol bud')
+//. a tylenol bud dub lonely ta
 /// complete('Satan, oscillate my')
 //. Satan, oscillate my metallic sonatas
 /// complete('star')
@@ -9,7 +11,7 @@ load('segment.js');
 /// complete('Zeus spots ti')
 //. Zeus spots tit stops suez
 /// complete('Hello there')
-//. Hello there erehtolleh
+//. Hello there er eh toll eh
 /// complete('A man, a plan, a c')
 //. A man, a plan, a canal panama
 /// complete('A man, a plan, a')
