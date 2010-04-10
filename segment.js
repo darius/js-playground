@@ -18,7 +18,7 @@ function Pw(word) {
 
 // Return a list of words such that words.join('') === string, along
 // with its log-probability. We pick the most-probable such list.
-var segment = memoize(function (string) {
+function segment(string) {
     function pair(words, logP) { words.logP = logP; return words; }
     if (!string) return pair([], 0);
     var best = pair([], -Infinity);
@@ -31,7 +31,8 @@ var segment = memoize(function (string) {
             best = pair([word].concat(result), logP);
     }
     return best;
-});
+}
+segment = memoize(segment);
 /// segment('iwin').logP
 //. -15.247999350135384
 /// segment('iwintheinternetsyayme')
