@@ -3,7 +3,10 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head><body>
   <h1>Yay</h1>
-  <script src="count_big.js"></script>
+  <script>
+    // These are filled in by count_big.js, which can take a while to load.
+    var NT = 1, vocab = {"the":1}, maxWordLength = 3;
+  </script>
   <script src="palindrome.jpp.js"></script>
   <script src="dom.js"></script>
 
@@ -22,6 +25,7 @@
     // Total hack alert
 
     function updateOutput() {
+    // XXX don't use innerHTML here
         $("output").innerHTML = complete(input.value);
     }
     function updateOutputSoon(event) {
@@ -31,4 +35,5 @@
     registerEventHandler($("textfield"), "keypress", updateOutputSoon);
 
   </script>
+  <script src="count_big.js"></script>
 </body></html>

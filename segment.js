@@ -4,14 +4,6 @@ load('utils.js');
 load('count_big.js'); //* skip
 /// vocab['the'] / NT
 //. 0.07237071748562623
-
-var maxWordLength = (function () {
-    var maxlen = 0;
-    for (var word in vocab)
-        if (maxlen < word.length)
-            maxlen = word.length;
-    return maxlen;
-})();
 /// maxWordLength
 //. 18
 
