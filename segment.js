@@ -20,19 +20,21 @@ function Pw(word) {
 // with its log-probability. We pick the most-probable such list.
 function segment(string) {
     function pair(words, logP) { words.logP = logP; return words; }
-    if (!string) return pair([], 0);
-    var best = pair([], -Infinity);
-    var limit = Math.min(string.length, maxWordLength);
-    for (var i = 1; i <= limit; ++i) {
-        var word = string.slice(0, i);
-        var result = segment(string.slice(i));
-        var logP = Math.log(Pw(word)) + result.logP;
-        if (best.logP < logP)
-            best = pair([word].concat(result), logP);
-    }
-    return best;
+    var memoSeg = memoize(function (string) {
+        if (!string) return pair([], 0);
+        var best = pair([], -Infinity);
+        var limit = Math.min(string.length, maxWordLength);
+        for (var i = 1; i <= limit; ++i) {
+            var word = string.slice(0, i);
+            var result = memoSeg(string.slice(i));
+            var logP = Math.log(Pw(word)) + result.logP;
+            if (best.logP < logP)
+                best = pair([word].concat(result), logP);
+        }
+        return best;
+    });
+    return memoSeg(string);
 }
-segment = memoize(segment);
 /// segment('iwin').logP
 //. -15.247999350135384
 /// segment('iwintheinternetsyayme')
