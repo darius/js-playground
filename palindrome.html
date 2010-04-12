@@ -1,8 +1,8 @@
 <html><head>
-  <title>Palindrome me</title>
+  <title>A Palindromedary</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head><body>
-  <h1>Yay</h1>
+  <h1>Aloha! Hola!</h1>
   <script>
     // These are filled in by count_big.js, which can take a while to load.
     var NT = 100, vocab = {"the":1}, maxWordLength = 3;
@@ -11,27 +11,37 @@
   <script src="dom.js"></script>
 
   <form name="palin" method="get" action="palin.html">
-  <p>Type here.</p>
-  <p>Whee: <input type="text" name="input" id="textfield"/></p>
+  <p>I&#8217;m
+  a <a href="http://www.ursulakleguin.com/Poetry-Palindromedary.html">palindromedary</a>,
+  and I so love palindromes that I&#8217;ll make one out of whatever
+  you type. (Its quality will be up to you.)</p>
+  <p>Feed me here: <input type="text" name="input" id="textfield"/></p>
   </form>
 
-  <div id="output">...</div>
-
+  <p id="yum">
+  
+    <div id="footer" style="font-size: smaller"><em>Copyright &#169; 2010 <a href="http://wry.me/blog/">Darius Bacon</a><br/></em></div></div>
   <script type="text/javascript">
 
     var palin = document.forms.palin;
     var input = palin.elements.input;
     input.focus();
 
+    function makeYum() {
+        $("yum").innerHTML = "Yum! Okay:&nbsp;&nbsp;&nbsp; <span id=\"output\">...</span>";
+        makeYum = function () { };
+    }
+
     // Total hack alert: when we're notified of the keypress event,
     // input.value hasn't yet been updated. So we schedule our update
     // for after. Surely there's a better way, such as a different event
     // to react to?
 
-    var output = $("output");
     function updateOutput() {
-        var outputNode = document.createTextNode(complete(input.value));
-        output.replaceChild(outputNode, output.firstChild);
+        makeYum();
+        var output = $("output");
+        var completed = document.createTextNode(complete(input.value));
+        output.replaceChild(completed, output.firstChild);
     }
     function updateOutputSoon(event) {
         setTimeout(updateOutput, 10);
