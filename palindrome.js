@@ -23,6 +23,8 @@ function complete(string) {
     var letters = extractLetters(string);
     var srettel = reverseString(letters);
     // TODO: make segmenting respect wordbreaks in the supplied string
+    // TODO: also consider moving the mirror point into the interior of the input
+    //  (like if it ends with "madam")
     var candidates = [segment(letters + srettel),
                       segment(letters + srettel.slice(1))];
     function score(words) {
