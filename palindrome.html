@@ -23,16 +23,19 @@
     var input = palin.elements.input;
     input.focus();
 
-    // Total hack alert
+    // Total hack alert: when we're notified of the keypress event,
+    // input.value hasn't yet been updated. So we schedule our update
+    // for after. Surely there's a better way, such as a different event
+    // to react to?
 
+    var output = $("output");
     function updateOutput() {
-    // XXX don't use innerHTML here
-        $("output").innerHTML = complete(input.value);
+        var outputNode = document.createTextNode(complete(input.value));
+        output.replaceChild(outputNode, output.firstChild);
     }
     function updateOutputSoon(event) {
         setTimeout(updateOutput, 10);
     }
-
     registerEventHandler($("textfield"), "keypress", updateOutputSoon);
 
   </script>
