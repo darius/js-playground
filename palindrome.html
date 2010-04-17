@@ -10,7 +10,7 @@
   <script src="palindrome.jpp.js"></script>
   <script src="dom.js"></script>
 
-  <form name="palin" method="get" action="palin.html">
+  <form name="palin" method="get" action="">
   <p>I&#8217;m
   a <a href="http://www.ursulakleguin.com/Poetry-Palindromedary.html">palindromedary</a>,
   and I so love palindromes that I&#8217;ll make one out of whatever
@@ -23,12 +23,13 @@
     <hr>
     <div id="footer" style="font-size:
     smaller"><a href="http://github.com/darius/js-playground">Source
-    code</a> on GitHub.
-      <p><em>Copyright &#169; 2010 <a href="http://wry.me/blog/">Darius Bacon</a><br/></em></div></div>
+    code</a> on GitHub. Or
+    see <a href="http://www.spinelessbooks.com/2002/deepspeed/index.html">another
+    online helper</a> for palindromists.
+    <p><em>Copyright &#169; 2010 <a href="http://wry.me/blog/">Darius Bacon</a><br/></em></div>
   <script type="text/javascript">
 
-    var palin = document.forms.palin;
-    var input = palin.elements.input;
+    var input = $("textfield");
     input.focus();
 
     function makeYum() {
@@ -48,9 +49,11 @@
         output.replaceChild(completed, output.firstChild);
     }
     function updateOutputSoon(event) {
-        setTimeout(updateOutput, 10);
+        setTimeout(updateOutput, 0);
     }
-    registerEventHandler($("textfield"), "keypress", updateOutputSoon);
+    registerEventHandler(input, "change", updateOutputSoon);
+    registerEventHandler(input, "keyup", updateOutputSoon);
+    registerEventHandler(input, "keydown", updateOutputSoon);
 
   </script>
   <script src="count_big.js"></script>
