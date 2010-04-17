@@ -15,7 +15,7 @@ def expand(file):
     for line in file:
         m = re.match(r"\s*load[(]'(.*)'[)]", line)
         if not m:
-            sys.stdout.write(line)
+            write(line)
         elif re.search(r'//[*] skip', line, re.I):
             write('// ' + line)
         else:
