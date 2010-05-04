@@ -29,11 +29,12 @@
     <p><em>Copyright &#169; 2010 <a href="http://wry.me/blog/">Darius Bacon</a><br/></em></div>
   <script type="text/javascript">
 
-    var input = $("textfield");
+    var input = $('textfield');
     input.focus();
 
     function makeYum() {
-        $("yum").innerHTML = "Yum! Okay:&nbsp;&nbsp;&nbsp; <span id=\"output\">...</span>";
+        $('yum').innerHTML =
+            'Yum! Okay:&nbsp;&nbsp;&nbsp; <span id="output">...</span>';
         makeYum = function () { };
     }
 
@@ -44,16 +45,16 @@
 
     function updateOutput() {
         makeYum();
-        var output = $("output");
+        var output = $('output');
         var completed = document.createTextNode(complete(input.value));
         output.replaceChild(completed, output.firstChild);
     }
     function updateOutputSoon(event) {
         setTimeout(updateOutput, 0);
     }
-    registerEventHandler(input, "change", updateOutputSoon);
-    registerEventHandler(input, "keyup", updateOutputSoon);
-    registerEventHandler(input, "keydown", updateOutputSoon);
+    registerEventHandler(input, 'change', updateOutputSoon);
+    registerEventHandler(input, 'keyup', updateOutputSoon);
+    registerEventHandler(input, 'keydown', updateOutputSoon);
 
   </script>
   <script src="count_big.js"></script>
