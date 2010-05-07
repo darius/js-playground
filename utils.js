@@ -51,3 +51,22 @@ function multidictSet(dict, keys, val) {
             dict = dict[keys[i]] = {};
     dict[keys[keys.length-1]] = val;
 }
+
+// From http://javascript.crockford.com/remedial.html
+function typeOf(value) {
+    var t = typeof value;
+    if (t === 'object')
+        if (value) {
+            if (value instanceof Array)
+                return 'array';
+        } else
+            return 'null';
+    return t;
+}
+
+function map(f, array) {
+    var result = [];
+    for (var i = 0; i < array.length; ++i)
+        result.push(f(array[i]));
+    return result;
+}
