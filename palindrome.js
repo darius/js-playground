@@ -20,13 +20,7 @@ load('segment.js');
 // Return a palindrome having :string as its left half. Try to pick
 // the 'best' one.
 function complete(string) {
-    var letters = extractLetters(string);
-    var srettel = reverseString(letters);
-    // TODO: make segmenting respect wordbreaks in the supplied string
-    // TODO: also consider moving the mirror point into the interior of the input
-    //  (like if it ends with "madam")
-    var candidates = [segment(letters + srettel),
-                      segment(letters + srettel.slice(1))];
+    var candidates = map(segment, listCandidates(string));
     function score(words) {
         // A better result has lower entropy per letter.
         return words.logP / (extractLetters(words.join('')).length || 1);
@@ -36,7 +30,24 @@ function complete(string) {
 }
 
 function extractLetters(string) {
-    return string.toLowerCase().replace(/[^a-z]/g, '');
+    return string.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function listCandidates(string) {
+    var letters = extractLetters(string);
+    var result = [];
+    for (var i = 0; i <= letters.length; ++i) {
+        var tail = letters.slice(i);
+        if (isPalindrome(tail)) {
+            var head = letters.slice(0, i);
+            result.push(letters + reverseString(head));
+        }
+    }
+    return result;
+}
+
+function isPalindrome(string) {
+    return string == reverseString(string);
 }
 
 /// merge('A man,', 'aman a plan')
@@ -48,7 +59,7 @@ function extractLetters(string) {
 //   and :extended contains only letters and spaces.
 function merge(base, extended) {
     for (var b = 0, e = 0; b < base.length; ++b)
-        if (/[a-z]/i.test(base.charAt(b))) {
+        if (/[a-z0-9]/i.test(base.charAt(b))) {
             while (extended.charAt(e) === ' ')
                 ++e;
             ++e;
