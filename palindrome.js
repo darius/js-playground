@@ -4,6 +4,8 @@ load('segment.js');
 
 /// complete('a tylenol bud')
 //. a tylenol bud dub lonely ta
+/// complete("I'm a salami ho -- ")
+/// I'm a salami ho -- him alas am i
 /// complete('Satan, oscillate my')
 //. Satan, oscillate my metallic sonatas
 /// complete('star')
@@ -23,10 +25,19 @@ function complete(string) {
     var candidates = map(segment, listCandidates(string));
     function score(words) {
         // A better result has lower entropy per letter.
+        //console.log(words.logP / (extractLetters(words.join('')).length || 1), words);
         return words.logP / (extractLetters(words.join('')).length || 1);
     }
-    var palindrome = maximum(candidates, score);
-    return merge(string, palindrome.join(' '));
+    var palindrome = maximum(candidates, score).join(' ');
+    if (startsWith(extractLetters(palindrome), extractLetters(string)))
+        // Mirrored to the right
+        return merge(string, palindrome);
+    else
+        // Mirrored to the left.
+        return mergeRight(string, palindrome);
+        // This hack's not good because it takes the palindrome as the
+        // 'base', it should take the string.
+//        return reverseString(merge(reverseString(palindrome), reverseString(string)));
 }
 
 function extractLetters(string) {
@@ -37,11 +48,12 @@ function listCandidates(string) {
     var letters = extractLetters(string);
     var result = [];
     for (var i = 0; i <= letters.length; ++i) {
-        var tail = letters.slice(i);
-        if (isPalindrome(tail)) {
-            var head = letters.slice(0, i);
+        var head = letters.slice(0, i), tail = letters.slice(i);
+        if (isPalindrome(head))
+            result.push(reverseString(tail) + letters);
+        if (isPalindrome(tail))
             result.push(letters + reverseString(head));
-        }
+        // XXX the full string appears twice if it's a palindrome
     }
     return result;
 }
@@ -65,4 +77,19 @@ function merge(base, extended) {
             ++e;
         }
     return base + extended.slice(e);
+}
+
+function mergeRight(base, extended) {
+    for (var b = base.length, e = extended.length; 0 < b; --b)
+        if (/[a-z0-9]/i.test(base.charAt(b - 1))) {
+            while (extended.charAt(e - 1) === ' ')
+                --e;
+            --e;
+        }
+//    console.log('mergeRight', base, '|', extended, '|', extended.slice(0, e) + base);
+    return extended.slice(0, e) + base;
+}
+
+function startsWith(a, b) {
+    return a.slice(0, b.length) === b;
 }

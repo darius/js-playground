@@ -77,6 +77,7 @@ function segment(string) {
             if (best.logP < logP)
                 best = pair([word].concat(result), logP);
         }
+//        console.log('best', string, best);
         return best;
     });
     return memoSeg(string);

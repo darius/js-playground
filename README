@@ -1,0 +1,3 @@
+Thanks to Greg Altman for making a palindromizer that prodded me to
+try mirroring to the left as well, and for a better reverseString().
+(See http://galtman.com/?p=8)
