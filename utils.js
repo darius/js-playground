@@ -21,17 +21,8 @@ function maximum(xs, key) {
     return best;
 }
 
-function reverseString(string) {
-    var a = arrayFromString(string);
-    a.reverse();
-    return a.join('');
-}
-
-function arrayFromString(string) {
-    var result = [];
-    for (var i = 0; i < string.length; ++i)
-        result.push(string.charAt(i));
-    return result;
+function reverseString(string) { // XXX rewrite
+    return string.split('').reverse().join('');
 }
 
 function multidictGet(dict, keys) {
