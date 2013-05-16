@@ -1,5 +1,10 @@
 'use strict';
 
+function assert(claim) {
+    if (!claim)
+        throw new Error("Liar");
+}
+
 var width = canvas.width, height = canvas.height;
 var size = width * height;
 var ctx = canvas.getContext("2d");
@@ -24,7 +29,7 @@ function inCircle(x, y, cx, cy, radius) {
 // Grid spaces
 var species = new Int8Array(size);
 var empty = 0, feed = 1, fish = 2, shark = 3;
-var population     = [0, 0, 0, 0];
+var population = [0, 0, 0, 0];
 var popHistory = [[0, 0, 0, 0]];
 
 function isBoring() {
@@ -36,11 +41,6 @@ function isBoring() {
 //    console.log('fish', unchanging(fish));
 //    console.log('shark', unchanging(shark));
     return unchanging(fish) && unchanging(shark);
-}
-
-function assert(claim) {
-    if (!claim)
-        throw new Error("Liar");
 }
 
 function unchanging(type) {
@@ -248,11 +248,11 @@ function rgba(r, g, b, a) {
             | r);
 }
 
-var black  = rgba(  0,   0,   0, 255);
-var red    = rgba(255,   0,   0, 255);
-var dullred = rgba(128,   0,   0, 255);
-var green  = rgba(  0, 255,   0, 255);
-var blue   = rgba(  0,   0, 255, 192);
-var yellow = rgba(  255, 255, 0, 255);
+var black      = rgba(  0,   0,   0, 255);
+var red        = rgba(255,   0,   0, 255);
+var dullred    = rgba(128,   0,   0, 255);
+var green      = rgba(  0, 255,   0, 255);
+var blue       = rgba(  0,   0, 255, 192);
+var yellow     = rgba(  255, 255, 0, 255);
 var dullyellow = rgba(  128, 128, 0, 255);
-var white  = rgba(255, 255, 255, 255);
+var white      = rgba(255, 255, 255, 255);
