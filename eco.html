@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <meta http-equiv="encoding" content="utf-8">
+</head>
+<body bgcolor="black">
+<canvas id="canvas" width="1490" height="750"
+        style="border:1px solid white">
+</canvas>
+<div style="color: white"><span id="tickcount">0</span> ticks</div>
+<div style="color: white"><span id="fishpop">0</span> fish</div>
+<div style="color: white"><span id="sharkpop">0</span> sharks</div>
+<script type="text/javascript">
+var canvas = document.getElementById("canvas");
+</script>
+
+<script type="text/javascript" src="eco.js"></script>
+
+<script type="text/javascript">
+
+var requestAnimFrame = 
+  (   window.requestAnimationFrame
+   || window.webkitRequestAnimationFrame
+   || window.mozRequestAnimationFrame
+   || function(callback) { setTimeout(callback, 1000 / 60); });
+
+var animating = true;
+
+var nticks = 0;
+function tick() {
+    for (var i = 0; i < 1; ++i)
+        step(nticks++);
+    draw();
+    document.getElementById('tickcount').innerHTML = '' + nticks;
+    document.getElementById('fishpop').innerHTML = '' + population[fish];
+    document.getElementById('sharkpop').innerHTML = '' + population[shark];
+    if (isBoring()) {
+        nticks = 0;
+        setup();
+    }
+    if (animating) requestAnimFrame(tick, canvas);
+}
+
+if (animating) requestAnimFrame(tick, canvas);
+
+</script>
+</body>
+</html>
