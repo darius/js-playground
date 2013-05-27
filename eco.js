@@ -60,8 +60,8 @@ var lastMealtimes = new Int32Array(size);
 var stamina = 1000;
 var nturtles_initially = (size / 100) | 0;
 var nturtles = nturtles_initially;
-var nsharks_initially = 90; // (nturtles / 5) | 0;
-var turtles = new Int32Array(size);  // XXX useme
+var nsharks_initially = 90;
+var turtles = new Int32Array(size);
 
 // Headings
 var dx = [1,  1,  0, -1, -1, -1,  0,  1];
