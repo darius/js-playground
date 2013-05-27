@@ -31,13 +31,8 @@ var popHistory = [[0, 0, 0, 0]];
 
 function isBoring() {
     assert(0 <= nticks && nticks < popHistory.length);
-    if (!(population[fish] === 0 || population[shark] === 0))
-        return false;
-//    return ((population[fish] === 0 || population[shark] === 0)
-//            && unchanging(fish) && unchanging(shark));
-//    console.log('fish', unchanging(fish));
-//    console.log('shark', unchanging(shark));
-    return unchanging(fish) && unchanging(shark);
+    return ((population[fish] === 0 || population[shark] === 0)
+            && unchanging(fish) && unchanging(shark));
 }
 
 function unchanging(type) {
