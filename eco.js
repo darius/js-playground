@@ -107,8 +107,8 @@ function turtlesAct(time) {
 
 // Make turtles[t] do its thing for this time step. Return the index
 // of the next turtle. (Usually t+1, but sometimes a turtle dies, and
-// we swap another turtle into the slot t and then return t, to keep
-// the numbering consecutive.)
+// to keep the numbering consecutive we swap another turtle into the
+// slot t and then return t.)
 // TODO clean this up!
 function turtleAct(time, t) {
     var pos0 = turtles[t];
