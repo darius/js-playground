@@ -105,6 +105,11 @@ function turtlesAct(time) {
         t = turtleAct(time, t);
 }
 
+// Make turtles[t] do its thing for this time step. Return the index
+// of the next turtle. (Usually t+1, but sometimes a turtle dies, and
+// we swap another turtle into the slot t and then return t, to keep
+// the numbering consecutive.)
+// TODO clean this up!
 function turtleAct(time, t) {
     var pos0 = turtles[t];
     var s = species[pos0];
@@ -175,8 +180,12 @@ function turtleAct(time, t) {
         species[pos0] = empty;
         species[pos1] = s;
         lastMealtimes[pos1] = time;
+        // There's already some turtle slot for pos1, where the fish
+        // that just died was; since we moved the shark to this pos1,
+        // it's in the turtles roster, and we must reclaim the slot t.
         turtles[t] = turtles[--nturtles];
-        return t; // XXX no turning
+        // XXX turn the shark too. After we stop cut-and-pasting the code.
+        return t;
     }
     else {
         // Turn
