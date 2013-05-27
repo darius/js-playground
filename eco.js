@@ -12,17 +12,6 @@ function at(x, y) {
     return width * y + x;
 }
 
-var foodRadius = 200;
-
-function inDiningRoom(x, y) {
-    return (inCircle(x, y, width/2, height/2, foodRadius)
-            || inCircle(x, y, 3*width/4, 3*height/4, foodRadius/2));
-}
-
-function inCircle(x, y, cx, cy, radius) {
-    return Math.pow(x-cx, 2) + Math.pow(y-cy, 2) < radius*radius;
-}
-
 // Grid spaces
 var species = new Int8Array(size);
 var empty = 0, feed = 1, fish = 2, shark = 3;
@@ -78,16 +67,13 @@ function inv() {
 function setup() {
     population = [0, 0, 0, 0];
     popHistory = [[0, 0, 0, 0]];
-    if (true)
-        for (var y = 0; y < height; ++y)
-            for (var x = 0; x < width; ++x)
-                species[at(x, y)] = inCircle(x, y, 300, 300, 100) ? feed : empty;
+    feedCircle(1e6, 300, 300, 100);
     nturtles = 0;
     for (var t = 0; t < nturtles_initially; ++t) {
         var r = 50 * Math.random();
         var theta = 2*Math.PI * Math.random();
-        x = (250 + r * Math.cos(theta)) | 0;
-        y = (250 + r * Math.sin(theta)) | 0;
+        var x = (250 + r * Math.cos(theta)) | 0;
+        var y = (250 + r * Math.sin(theta)) | 0;
         var pos = at(x, y);
         if (species[pos] < fish) {
             species[pos] = (t < nsharks_initially ? shark : fish);
@@ -197,24 +183,24 @@ function turtleAct(time, t) {
 }
 
 function replenishFeed() {
-    for (var i = 0; i < 2000; ++i) {
-        var x = (width/2  - foodRadius + foodRadius*2*Math.random()) | 0;
-        var y = (height/2 - foodRadius + foodRadius*2*Math.random()) | 0;
-        if (inDiningRoom(x, y)) {
+    feedCircle(2000, width/2, height/2, 200);
+    feedCircle(500, 3*width/4, 3*height/4, 100);
+}
+
+function feedCircle(npoints, cx, cy, radius) {
+    for (var i = 0; i < npoints; ++i) {
+        var x = (cx - radius + radius*2*Math.random()) | 0;
+        var y = (cy - radius + radius*2*Math.random()) | 0;
+        if (inCircle(x, y, cx, cy, radius)) {
             var pos = at(x, y);
             if (species[pos] === empty)
                 species[pos] = feed;
         }
     }
-    for (var i = 0; i < 500; ++i) {
-        var x = (3*width/4  - foodRadius/2 + foodRadius*Math.random()) | 0;
-        var y = (3*height/4 - foodRadius/2 + foodRadius*Math.random()) | 0;
-        if (inDiningRoom(x, y)) {
-            var pos = at(x, y);
-            if (species[pos] === empty)
-                species[pos] = feed;
-        }
-    }
+}
+
+function inCircle(x, y, cx, cy, radius) {
+    return Math.pow(x-cx, 2) + Math.pow(y-cy, 2) < radius*radius;
 }
 
 var ctx = canvas.getContext("2d");
