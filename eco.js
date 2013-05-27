@@ -7,9 +7,6 @@ function assert(claim) {
 
 var width = canvas.width, height = canvas.height;
 var size = width * height;
-var ctx = canvas.getContext("2d");
-var imageData = ctx.createImageData(width, height);
-var pixels = new Int32Array(imageData.data.buffer);
 
 function at(x, y) {
     return width * y + x;
@@ -224,6 +221,10 @@ function replenishFeed() {
         }
     }
 }
+
+var ctx = canvas.getContext("2d");
+var imageData = ctx.createImageData(width, height);
+var pixels = new Int32Array(imageData.data.buffer);
 
 // Redraw the canvas.
 function draw() {
