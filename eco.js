@@ -67,23 +67,32 @@ function inv() {
 function setup() {
     population = [0, 0, 0, 0];
     popHistory = [[0, 0, 0, 0]];
-    feedCircle(1e6, 300, 300, 100);
+    feedCircle(2e5, 300, 300, 100);
     nturtles = 0;
     for (var t = 0; t < nturtles_initially; ++t) {
-        var r = 50 * Math.random();
-        var theta = 2*Math.PI * Math.random();
-        var x = (250 + r * Math.cos(theta)) | 0;
-        var y = (250 + r * Math.sin(theta)) | 0;
-        var pos = at(x, y);
+        var pos = randomStartingPos();
         if (species[pos] < fish) {
-            species[pos] = (t < nsharks_initially ? shark : fish);
-            ++population[species[pos]];
-            headings[pos] = randomHeading();
-            lastMealtimes[pos] = 0;
-            turtles[nturtles++] = pos;
+            addTurtle(pos, t < nsharks_initially ? shark : fish);
         }
     }
 }
+
+function randomStartingPos() {
+    var r = 50 * Math.random();
+    var theta = 2*Math.PI * Math.random();
+    var x = (250 + r * Math.cos(theta)) | 0;
+    var y = (250 + r * Math.sin(theta)) | 0;
+    return at(x, y);
+}
+
+function addTurtle(pos, type) {
+    species[pos] = type;
+    ++population[type];
+    headings[pos] = randomHeading();
+    lastMealtimes[pos] = 0;
+    turtles[nturtles++] = pos;
+}
+
 setup();
 
 function step(time) {
