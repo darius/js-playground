@@ -71,9 +71,8 @@ function setup() {
     nturtles = 0;
     for (var t = 0; t < nturtles_initially; ++t) {
         var pos = randomStartingPos();
-        if (species[pos] < fish) {
+        if (species[pos] < fish)
             addTurtle(pos, t < nsharks_initially ? shark : fish);
-        }
     }
 }
 
