@@ -183,6 +183,9 @@ function turtleAct(time, t) {
         // There's already some turtle slot for pos1, where the fish
         // that just died was; since we moved the shark to this pos1,
         // it's in the turtles roster, and we must reclaim the slot t.
+        // N.B. this means this shark could move twice in one turn,
+        // when the fish eaten had not yet moved on this tick. Since
+        // eating fish is fairly rare I don't much care.
         turtles[t] = turtles[--nturtles];
         // XXX turn the shark too. After we stop cut-and-pasting the code.
         return t;
