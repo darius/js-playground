@@ -127,10 +127,8 @@ function turtleAct(time, t) {
     var x0 = pos0 % width;
     var y0 = (pos0 / width) | 0;
 
-    var x1 = x0 + dx[h];
-    x1 = (x1 < 0 ? width-1  : x1 === width  ? 0 : x1);
-    var y1 = y0 + dy[h];
-    y1 = (y1 < 0 ? height-1 : y1 === height ? 0 : y1);
+    var x1 = x0 + dx[h];   x1 = (x1 < 0 ? width-1  : x1 === width  ? 0 : x1);
+    var y1 = y0 + dy[h];   y1 = (y1 < 0 ? height-1 : y1 === height ? 0 : y1);
     var pos1 = at(x1, y1);
     if (species[pos1] === empty
         || (s === shark && species[pos1] === feed)) {
