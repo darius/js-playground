@@ -227,7 +227,6 @@ function replenishFeed() {
 
 // Redraw the canvas.
 function draw() {
-    var data = imageData.data;
     for (var i = 0; i < size; ++i)
         pixels[i] = patchColor(species[i], i);
     ctx.putImageData(imageData, 0, 0);
