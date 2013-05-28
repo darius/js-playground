@@ -127,19 +127,20 @@ function turtleAct(time, t) {
         return t;
     }
 
-    var h = headings[pos0];
     var x0 = pos0 % width;
     var y0 = (pos0 / width) | 0;
+    var mealtime = lastMealtimes[pos0];
 
+    // Turn
+    var h = headings[pos0];
+    if (time < mealtime + (Math.random() * 100 + 400)
+        || Math.random() < 1/30)
+        h = (h + (Math.random() < .5 ? -1 : 1)) & 7;
+
+    // Look where we're going
     var x1 = x0 + dx[h];   x1 = (x1 < 0 ? width-1  : x1 === width  ? 0 : x1);
     var y1 = y0 + dy[h];   y1 = (y1 < 0 ? height-1 : y1 === height ? 0 : y1);
     var pos1 = at(x1, y1);
-
-    function maybeTurn(pos) {
-        if (time < lastMealtimes[pos] + (Math.random() * 100 + 400)
-            || Math.random() < 1/30)
-            headings[pos] = (h + (Math.random() < .5 ? -1 : 1)) & 7;
-    }
 
     if (species[pos1] === empty
         || (s === shark && species[pos1] === feed)) {
@@ -148,12 +149,10 @@ function turtleAct(time, t) {
         species[pos0] = species[pos1];
         species[pos1] = s;
         headings[pos1] = h;
-        lastMealtimes[pos1] = lastMealtimes[pos0];
-
-        maybeTurn(pos1);
+        lastMealtimes[pos1] = mealtime;
 
         if (species[pos0] === empty
-            && time < lastMealtimes[pos1] + 100
+            && time < mealtime + 100
             && Math.random() < (s === fish ? 0.01 : 0.0033)
             && nturtles < size)
             spawn(pos0, s);
@@ -165,7 +164,6 @@ function turtleAct(time, t) {
         species[pos1] = s;
         headings[pos1] = h;
         lastMealtimes[pos1] = time;
-        maybeTurn(pos1);
     }
     else if (s === shark && species[pos1] === fish) {
         // Move and eat
@@ -181,12 +179,10 @@ function turtleAct(time, t) {
         // when the fish eaten had not yet moved on this tick. Since
         // eating fish is fairly rare I don't much care.
         turtles[t] = turtles[--nturtles];
-        // XXX turn the shark too. After we stop cut-and-pasting the code.
         return t;
     }
-    else {
-        maybeTurn(pos0);
-    }
+    else
+        headings[pos0] = h;
 
     return t+1;
 }
