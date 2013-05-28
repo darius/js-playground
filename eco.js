@@ -144,8 +144,8 @@ function turtleAct(time, t) {
     if (species[pos1] === empty
         || (s === shark && species[pos1] === feed)) {
         // Move
-        species[pos0] = species[pos1];
         turtles[t] = pos1;
+        species[pos0] = species[pos1];
         species[pos1] = s;
         headings[pos1] = h;
         lastMealtimes[pos1] = lastMealtimes[pos0];
@@ -160,8 +160,8 @@ function turtleAct(time, t) {
     }
     else if (s === fish && species[pos1] === feed) {
         // Move and eat
-        species[pos0] = empty;
         turtles[t] = pos1;
+        species[pos0] = empty;
         species[pos1] = s;
         headings[pos1] = h;
         lastMealtimes[pos1] = time;
@@ -172,6 +172,7 @@ function turtleAct(time, t) {
         --population[fish];
         species[pos0] = empty;
         species[pos1] = s;
+        headings[pos1] = h;
         lastMealtimes[pos1] = time;
         // There's already some turtle slot for pos1, where the fish
         // that just died was; since we moved the shark to this pos1,
