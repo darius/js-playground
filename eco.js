@@ -72,7 +72,7 @@ function setup() {
     for (var t = 0; t < nturtles_initially; ++t) {
         var pos = randomStartingPos();
         if (species[pos] < fish)
-            addTurtle(pos, t < nsharks_initially ? shark : fish);
+            spawn(pos, t < nsharks_initially ? shark : fish);
     }
 }
 
@@ -84,7 +84,7 @@ function randomStartingPos() {
     return at(x, y);
 }
 
-function addTurtle(pos, type) {
+function spawn(pos, type) {
     species[pos] = type;
     ++population[type];
     headings[pos] = randomHeading();
@@ -155,15 +155,8 @@ function turtleAct(time, t) {
         if (species[pos0] === empty
             && time < lastMealtimes[pos1] + 100
             && Math.random() < (s === fish ? 0.01 : 0.0033)
-            && nturtles < size) {
-            // Spawn
-            // TODO don't move newborns until next tick
-            ++population[s];
-            turtles[nturtles++] = pos0;
-            species[pos0] = s;
-            headings[pos0] = randomHeading();
-            lastMealtimes[pos0] = 0;
-        }
+            && nturtles < size)
+            spawn(pos0, s);
     }
     else if (s === fish && species[pos1] === feed) {
         // Move and eat
