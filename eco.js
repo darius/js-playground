@@ -142,6 +142,7 @@ function turtleAct(time, t) {
     var x1 = x0 + dx[h];   x1 = (x1 < 0 ? width-1  : x1 === width  ? 0 : x1);
     var y1 = y0 + dy[h];   y1 = (y1 < 0 ? height-1 : y1 === height ? 0 : y1);
     var pos1 = at(x1, y1);
+    var species1 = species[pos1];
 
     function move(track, mealtime) {
         turtles[t] = pos1;
@@ -151,9 +152,7 @@ function turtleAct(time, t) {
         lastMealtimes[pos1] = mealtime;
     }
 
-    var species1 = species[pos1];
-    if (species1 === empty
-        || (s === shark && species1 === feed)) {
+    if (species1 === empty || (s === shark && species1 === feed)) {
         move(species1, mealtime);
         if (species1 === empty
             && time < mealtime + 100
