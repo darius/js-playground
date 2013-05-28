@@ -151,19 +151,20 @@ function turtleAct(time, t) {
         lastMealtimes[pos1] = mealtime;
     }
 
-    if (species[pos1] === empty
-        || (s === shark && species[pos1] === feed)) {
-        move(species[pos1], mealtime);
-        if (species[pos0] === empty
+    var species1 = species[pos1];
+    if (species1 === empty
+        || (s === shark && species1 === feed)) {
+        move(species1, mealtime);
+        if (species1 === empty
             && time < mealtime + 100
             && random() < (s === fish ? 0.01 : 0.0033))
             spawn(pos0, s);
     }
-    else if (s === fish && species[pos1] === feed) {
+    else if (s === fish && species1 === feed) {
         // Move and eat
         move(empty, time);
     }
-    else if (s === shark && species[pos1] === fish) {
+    else if (s === shark && species1 === fish) {
         // Move and eat
         --population[fish];
         move(empty, time);
