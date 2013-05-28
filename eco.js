@@ -109,7 +109,6 @@ function turtlesAct(time) {
 // of the next turtle. (Usually t+1, but sometimes a turtle dies, and
 // to keep the numbering consecutive we swap another turtle into the
 // slot t and then return t.)
-// TODO clean this up!
 function turtleAct(time, t) {
     var pos0 = turtles[t];
     var s = species[pos0];
@@ -142,15 +141,17 @@ function turtleAct(time, t) {
     var y1 = y0 + dy[h];   y1 = (y1 < 0 ? height-1 : y1 === height ? 0 : y1);
     var pos1 = at(x1, y1);
 
-    if (species[pos1] === empty
-        || (s === shark && species[pos1] === feed)) {
-        // Move
+    function move(track, mealtime) {
         turtles[t] = pos1;
-        species[pos0] = species[pos1];
+        species[pos0] = track;
         species[pos1] = s;
         headings[pos1] = h;
         lastMealtimes[pos1] = mealtime;
+    }
 
+    if (species[pos1] === empty
+        || (s === shark && species[pos1] === feed)) {
+        move(species[pos1], mealtime);
         if (species[pos0] === empty
             && time < mealtime + 100
             && Math.random() < (s === fish ? 0.01 : 0.0033)
@@ -159,19 +160,12 @@ function turtleAct(time, t) {
     }
     else if (s === fish && species[pos1] === feed) {
         // Move and eat
-        turtles[t] = pos1;
-        species[pos0] = empty;
-        species[pos1] = s;
-        headings[pos1] = h;
-        lastMealtimes[pos1] = time;
+        move(empty, time);
     }
     else if (s === shark && species[pos1] === fish) {
         // Move and eat
         --population[fish];
-        species[pos0] = empty;
-        species[pos1] = s;
-        headings[pos1] = h;
-        lastMealtimes[pos1] = time;
+        move(empty, time);
         // There's already some turtle slot for pos1, where the fish
         // that just died was; since we moved the shark to this pos1,
         // it's in the turtles roster, and we must reclaim the slot t.
