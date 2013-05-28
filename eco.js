@@ -154,8 +154,7 @@ function turtleAct(time, t) {
         move(species[pos1], mealtime);
         if (species[pos0] === empty
             && time < mealtime + 100
-            && Math.random() < (s === fish ? 0.01 : 0.0033)
-            && nturtles < size)
+            && Math.random() < (s === fish ? 0.01 : 0.0033))
             spawn(pos0, s);
     }
     else if (s === fish && species[pos1] === feed) {
