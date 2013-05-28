@@ -5,6 +5,8 @@ function assert(claim) {
         throw new Error("Liar");
 }
 
+var random = Math.random;
+
 var width = canvas.width, height = canvas.height;
 var size = width * height;
 
@@ -57,7 +59,7 @@ var dx = [1,  1,  0, -1, -1, -1,  0,  1];
 var dy = [0,  1,  1,  1,  0, -1, -1, -1];
 
 function randomHeading() {
-    return (8 * Math.random()) | 0;
+    return (8 * random()) | 0;
 }
 
 function inv() {
@@ -77,8 +79,8 @@ function setup() {
 }
 
 function randomStartingPos() {
-    var r = 50 * Math.random();
-    var theta = 2*Math.PI * Math.random();
+    var r = 50 * random();
+    var theta = 2*Math.PI * random();
     var x = (250 + r * Math.cos(theta)) | 0;
     var y = (250 + r * Math.sin(theta)) | 0;
     return at(x, y);
@@ -118,7 +120,7 @@ function turtleAct(time, t) {
     // TODO make this species-dependent
     if (fish <= s 
         && lastMealtimes[pos0] + (s === shark ? 0.6 : 1) * stamina < time
-        && Math.random() < (s === shark ? 0.01 : 0.02)
+        && random() < (s === shark ? 0.01 : 0.02)
         && 0 < nturtles) {
         --population[s];
         species[pos0] = empty;
@@ -132,9 +134,9 @@ function turtleAct(time, t) {
 
     // Turn
     var h = headings[pos0];
-    if (time < mealtime + (Math.random() * 100 + 400)
-        || Math.random() < 1/30)
-        h = (h + (Math.random() < .5 ? -1 : 1)) & 7;
+    if (time < mealtime + (random() * 100 + 400)
+        || random() < 1/30)
+        h = (h + (random() < .5 ? -1 : 1)) & 7;
 
     // Look where we're going
     var x1 = x0 + dx[h];   x1 = (x1 < 0 ? width-1  : x1 === width  ? 0 : x1);
@@ -154,7 +156,7 @@ function turtleAct(time, t) {
         move(species[pos1], mealtime);
         if (species[pos0] === empty
             && time < mealtime + 100
-            && Math.random() < (s === fish ? 0.01 : 0.0033))
+            && random() < (s === fish ? 0.01 : 0.0033))
             spawn(pos0, s);
     }
     else if (s === fish && species[pos1] === feed) {
@@ -187,8 +189,8 @@ function replenishFeed() {
 
 function feedCircle(npoints, cx, cy, radius) {
     for (var i = 0; i < npoints; ++i) {
-        var x = (cx - radius + radius*2*Math.random()) | 0;
-        var y = (cy - radius + radius*2*Math.random()) | 0;
+        var x = (cx - radius + radius*2*random()) | 0;
+        var y = (cy - radius + radius*2*random()) | 0;
         if (inCircle(x, y, cx, cy, radius)) {
             var pos = at(x, y);
             if (species[pos] === empty)
