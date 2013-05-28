@@ -113,8 +113,7 @@ function turtlesAct(time) {
 function turtleAct(time, t) {
     var pos0 = turtles[t];
     var s = species[pos0];
-    if (s !== fish && s !== shark)
-        throw new Error("species " + s);
+    assert(s === fish || s === shark);
 
     // Die
     // TODO make this species-dependent
@@ -135,6 +134,13 @@ function turtleAct(time, t) {
     var x1 = x0 + dx[h];   x1 = (x1 < 0 ? width-1  : x1 === width  ? 0 : x1);
     var y1 = y0 + dy[h];   y1 = (y1 < 0 ? height-1 : y1 === height ? 0 : y1);
     var pos1 = at(x1, y1);
+
+    function maybeTurn(pos) {
+        if (time < lastMealtimes[pos] + (Math.random() * 100 + 400)
+            || Math.random() < 1/30)
+            headings[pos] = (h + (Math.random() < .5 ? -1 : 1)) & 7;
+    }
+
     if (species[pos1] === empty
         || (s === shark && species[pos1] === feed)) {
         // Move
@@ -144,10 +150,7 @@ function turtleAct(time, t) {
         headings[pos1] = h;
         lastMealtimes[pos1] = lastMealtimes[pos0];
 
-        // Turn
-        if (time < lastMealtimes[pos1] + (Math.random() * 100 + 400)
-            || Math.random() < 1/30)
-            headings[pos1] = (h + (Math.random() < .5 ? -1 : 1)) & 7;
+        maybeTurn(pos1);
 
         if (species[pos0] === empty
             && time < lastMealtimes[pos1] + 100
@@ -169,10 +172,7 @@ function turtleAct(time, t) {
         species[pos1] = s;
         headings[pos1] = h;
         lastMealtimes[pos1] = time;
-        // Turn
-        if (time < lastMealtimes[pos1] + (Math.random() * 100 + 400)
-            || Math.random() < 1/30)
-            headings[pos1] = (h + (Math.random() < .5 ? -1 : 1)) & 7;
+        maybeTurn(pos1);
     }
     else if (s === shark && species[pos1] === fish) {
         // Move and eat
@@ -191,10 +191,7 @@ function turtleAct(time, t) {
         return t;
     }
     else {
-        // Turn
-        if (time < lastMealtimes[pos0] + (Math.random() * 100 + 400)
-            || Math.random() < 1/30)
-            headings[pos0] = (h + (Math.random() < .5 ? -1 : 1)) & 7;
+        maybeTurn(pos0);
     }
 
     return t+1;
