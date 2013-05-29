@@ -117,7 +117,6 @@ function turtleAct(time, t) {
     assert(s === fish || s === shark);
 
     // Die
-    // TODO make this species-dependent
     if (fish <= s 
         && lastMealtimes[pos0] + (s === shark ? 0.6 : 1) * stamina < time
         && random() < (s === shark ? 0.01 : 0.02)

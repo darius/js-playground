@@ -117,6 +117,7 @@ function onLoad() {
 // maybe modulus and argument, too
 // more references, e.g. Feynman and 
 //   https://www.khanacademy.org/math/algebra/complex-numbers
+// can we keep labels from overlapping?
 
 // use background canvas for grid
 /*
