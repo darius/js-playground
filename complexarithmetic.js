@@ -113,6 +113,10 @@ function onLoad() {
 // magnify or translate the plane?
 // add explanatory text
 // checkboxes for which operations show
+// exponentiation
+// maybe modulus and argument, too
+// more references, e.g. Feynman and 
+//   https://www.khanacademy.org/math/algebra/complex-numbers
 
 // use background canvas for grid
 /*
