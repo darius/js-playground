@@ -15,11 +15,13 @@ function at(x, y) {
 }
 
 // Grid spaces
-var species = new Int8Array(size);
-var empty = 0, feed = 1, fish = 2, shark = 3;
-var population = [0, 0, 0, 0];
-var popHistory = [[0, 0, 0, 0]];
+var species = new Int8Array(size);            // One for each grid position
+var empty = 0, feed = 1, fish = 2, shark = 3; // Legal values for species
+var population = [0, 0, 0, 0];                // Current count of each species
+var popHistory = [[0, 0, 0, 0]];              // Populations at each tick so far
 
+// Return true if the action has settled down.
+// (The way things go now this never happens, in practice.)
 function isBoring() {
     assert(0 <= nticks && nticks < popHistory.length);
     return ((population[fish] === 0 || population[shark] === 0)
@@ -44,17 +46,21 @@ function recentRange(type) {
     return hi - lo;
 }
 
+// State variables for the turtle at each grid square, if any.
 var headings      = new Int8Array(size);
 var lastMealtimes = new Int32Array(size);
 
 // Turtles
 var stamina = 1000;
 var nturtles_initially = (size / 100) | 0;
-var nturtles = nturtles_initially;
 var nsharks_initially = 90;
+var nturtles = 0;
+// Grid index of turtle #t for 0 <= t < nturtles:
 var turtles = new Int32Array(size);
 
 // Headings
+// Displacements for each heading. For each heading, its 45-degree
+// neighbors left and right are cyclically adjacent in index.
 var dx = [1,  1,  0, -1, -1, -1,  0,  1];
 var dy = [0,  1,  1,  1,  0, -1, -1, -1];
 
@@ -86,6 +92,8 @@ function randomStartingPos() {
     return at(x, y);
 }
 
+// Make a new turtle of the type at the position.
+// Pre: pos doesn't hold a turtle already.
 function spawn(pos, type) {
     species[pos] = type;
     ++population[type];
