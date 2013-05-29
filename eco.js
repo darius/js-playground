@@ -18,6 +18,7 @@ function at(x, y) {
 var species = new Int8Array(size);            // One for each grid position
 var empty = 0, feed = 1, fish = 2, shark = 3; // Legal values for species
 var population = [0, 0, 0, 0];                // Current count of each species
+                                              // (but empty/feed not tracked)
 var popHistory = [[0, 0, 0, 0]];              // Populations at each tick so far
 
 // Return true if the action has settled down.
@@ -66,10 +67,6 @@ var dy = [0,  1,  1,  1,  0, -1, -1, -1];
 
 function randomHeading() {
     return (8 * random()) | 0;
-}
-
-function inv() {
-    assert(population[empty] === 0);
 }
 
 function setup() {
