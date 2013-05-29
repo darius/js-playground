@@ -64,8 +64,21 @@ function add(u, v) {
 }
 
 function sub(u, v) {
-    return {re: u.re - v.re,
-            im: u.im - v.im};
+    return add(u, rmul(-1, v));
+}
+
+function mul(u, v) {
+    return {re: u.re * v.re - u.im * v.im,
+            im: u.im * v.re + u.re * v.im};
+}
+
+function div(u, v) {
+    return mul(u, reciprocal(v));
+}
+
+function reciprocal(v) {
+    var vv = v.re*v.re + v.im*v.im;
+    return rmul(1/vv, conjugate(v));
 }
 
 function conjugate(v) {
@@ -76,16 +89,6 @@ function conjugate(v) {
 function rmul(r, v) {
     return {re: r * v.re,
             im: r * v.im};
-}
-
-function mul(u, v) {
-    return {re: u.re * v.re - u.im * v.im,
-            im: u.im * v.re + u.re * v.im};
-}
-
-function div(u, v) {
-    var vv = v.re*v.re + v.im*v.im;
-    return rmul(1/vv, mul(u, conjugate(v)));
 }
 
 function onMousemove(event) {
