@@ -108,16 +108,17 @@ function onLoad() {
 }
 
 // TODO: 
-// alpha channel
+// can we keep labels from overlapping?
+// alpha channel on labels/points so overlap looks better?
+// checkboxes for which operations show
 // nicer display of plane with more grid lines
 // magnify or translate the plane?
-// add explanatory text
-// checkboxes for which operations show
-// exponentiation
 // maybe modulus and argument, too
+// exponentiation, log?
+// enter your own expressions
+// more explanatory text
 // more references, e.g. Feynman and 
 //   https://www.khanacademy.org/math/algebra/complex-numbers
-// can we keep labels from overlapping?
 
 // use background canvas for grid
 /*
@@ -128,3 +129,5 @@ function onLoad() {
    style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
 </div>
 */
+// or "use a plain DIV element with a CSS background property and
+// position it under the canvas"
