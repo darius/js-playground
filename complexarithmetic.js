@@ -121,6 +121,7 @@ function onLoad() {
 //   https://www.khanacademy.org/math/algebra/complex-numbers
 
 // use background canvas for grid
+// https://gist.github.com/louisstow/5610652
 /*
 <div style="position: relative;">
  <canvas id="layer1" width="100" height="100" 
