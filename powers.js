@@ -34,7 +34,7 @@ var scale = height / 3;
 
 var tau = 2*Math.PI;
 
-var varA = {re: 0.5, im: 0.5};
+var refPoint = null;
 
 function clear() {
     ctx.clearRect(0, 0, width, height);
@@ -47,6 +47,11 @@ function clear() {
     ctx.beginPath();
     ctx.arc(width/2, height/2, scale, 0, tau, true);
     ctx.stroke();
+
+    if (refPoint) {
+        ctx.fillStyle = 'red';
+        plot(refPoint);
+    }
 
     ctx.fillStyle = 'blue';
     plot({re: 1, im: 0}, '1');
@@ -96,14 +101,34 @@ function squaredMagnitude(v) {
     return v.re*v.re + v.im*v.im;
 }
 
+function add(u, v) {
+    return {re: u.re + v.re,
+            im: u.im + v.im};
+}
+
 function mul(u, v) {
     return {re: u.re * v.re - u.im * v.im,
             im: u.im * v.re + u.re * v.im};
 }
 
+function rmul(r, v) {
+    return {re: r * v.re,
+            im: r * v.im};
+}
+
+function onClick(event) {
+    refPoint = (refPoint ? null : pointingAt(event));
+}
+
+canvas.addEventListener("click", onClick);
+
 function onMousemove(event) {
     cancelAnimationFrame(nextFrame);
-    show(pointingAt(event));
+    var z = pointingAt(event);
+    if (refPoint)
+        z = add(rmul(19/20, refPoint),
+                rmul( 1/20, z));
+    show(z);
 }
 
 canvas.addEventListener("mousemove", onMousemove);
