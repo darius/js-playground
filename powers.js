@@ -74,25 +74,6 @@ function showing(z, p, i) {
         nextFrame = requestAnimationFrame(function() { showing(z, p, i) });
 }
 
-function squaredMagnitude(v) {
-    return v.re*v.re + v.im*v.im;
-}
-
-function add(u, v) {
-    return {re: u.re + v.re,
-            im: u.im + v.im};
-}
-
-function mul(u, v) {
-    return {re: u.re * v.re - u.im * v.im,
-            im: u.im * v.re + u.re * v.im};
-}
-
-function rmul(r, v) {
-    return {re: r * v.re,
-            im: r * v.im};
-}
-
 function onClick(event) {
     refPoint = (refPoint ? null : pointingAt(event));
 }
@@ -123,9 +104,6 @@ function onLoad() {
 // effect currently visible, iterating z = f(p, z) starting from 1).
 
 // or how about plotting the solutions to f(p, z) = 0
-
-// an option for fine movements -- position on complex plane changes
-// less than you move the mouse
 
 // touch events
 
