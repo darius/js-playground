@@ -15,14 +15,17 @@ var varA = {re: 0.5, im: 0.5};
 
 function clear() {
     ctx.clearRect(0, 0, width, height);
+
     ctx.fillStyle = 'white';
     ctx.fillRect(0, height/2, width, 1);
     ctx.fillRect(width/2, 0, 1, height);
+
     ctx.strokeStyle = 'white';
     ctx.beginPath();
     ctx.arc(width/2, height/2, scale, 0, tau, true);
     ctx.closePath();
     ctx.stroke();
+
     ctx.fillStyle = 'blue';
     plot({re: 0, im: 0}, '0');
     plot({re: 1, im: 0}, '1');
