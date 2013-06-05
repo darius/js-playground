@@ -7,7 +7,6 @@ function makeGame(canvasId, width, height, backgroundColor) {
     canvas.width = width;
     canvas.height = height;
     var ctx = canvas.getContext('2d');
-    var actors = [];
 
     var keyDown = {};
     window.addEventListener('keydown',
@@ -17,6 +16,7 @@ function makeGame(canvasId, width, height, backgroundColor) {
                             function(event) { keyDown[event.keyCode] = false; },
                             false);
 
+    var actors = [];
     return {
         addActor: function(actor) {
             actors.push(actor);
