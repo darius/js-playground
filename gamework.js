@@ -36,13 +36,59 @@ function makeGame(canvasId, width, height, backgroundColor) {
             });
         },
         isPressed: function(key) {
+            if (typeof key === 'string')
+                key = key.charCodeAt(0);
             return !!keyDown[key];
         },
     };
 }
 
 var keycodes = { 
-    upArrow: 38
+    backspace: 8,
+    tab: 9,
+    enter: 13,
+    shift: 16,
+    ctrl: 17,
+    alt: 18,
+    pause: 19,
+    capsLock: 20,
+    esc: 27,
+    space: 32,
+    pageUp: 33,
+    pageDown: 34,
+    end: 35,
+    home: 36,
+    leftArrow: 37,
+    upArrow: 38,
+    rightArrow: 39,
+    downArrow: 40,
+    insert: 45,
+    delete_: 46,
+    F1: 112,
+    F2: 113,
+    F3: 114,
+    F4: 115,
+    F5: 116,
+    F6: 117,
+    F7: 118,
+    F8: 119,
+    F9: 120,
+    F10: 121,
+    F11: 122,
+    F12: 123,
+    numLock: 144,
+    scrollLock: 145,
+    semicolon: 186,
+    equals: 187,
+    comma: 188,
+    dash: 189,
+    period: 190,
+    slash: 191,
+    backquote: 192,
+    lbracket: 219,
+    backslash: 220,
+    rbracket: 221,
+    quote: 222
 };
 
 function trackBumps(actors) {
