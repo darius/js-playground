@@ -38,6 +38,11 @@ function tick() {
     if (.2 <= rate + dr && rate + dr <= 5)
         rate += dr;
     time += rate;
+
+    if (false && time < 1000) {
+        ctx.fillStyle = 'rgba(0,255,0,64)';
+        ctx.fillText('Give it a while. Try moving the mouse.', width/2 - 100, 50);
+    }
 }
 
 function animLoop(render) {
