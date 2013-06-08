@@ -15,15 +15,10 @@
 var canvas = document.getElementById("canvas");
 </script>
 
+<script type="text/javascript" src="polyfill.js"></script>
 <script type="text/javascript" src="eco.js"></script>
 
 <script type="text/javascript">
-
-var requestAnimFrame = 
-  (   window.requestAnimationFrame
-   || window.webkitRequestAnimationFrame
-   || window.mozRequestAnimationFrame
-   || function(callback) { setTimeout(callback, 1000 / 60); });
 
 var animating = true;
 
@@ -39,10 +34,10 @@ function tick() {
         nticks = 0;
         setup();
     }
-    if (animating) requestAnimFrame(tick);
+    if (animating) requestAnimationFrame(tick);
 }
 
-if (animating) requestAnimFrame(tick);
+if (animating) requestAnimationFrame(tick);
 
 </script>
 </body>
