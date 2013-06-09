@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <meta http-equiv="encoding" content="utf-8">
+  <style type="text/css">
+    #canvases {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+    }
+    canvas {
+      position: absolute;
+      left: 0;
+      right: 0;
+    }
+  </style>
+</head>
+<body bgcolor="black">
+  <div id="canvases">
+    <canvas id="backcanvas" width="1200" height="800"></canvas>
+    <canvas id="frontcanvas" width="1200" height="800"></canvas>
+  </div>
+  <script type="text/javascript">
+    var backCanvas = document.getElementById("backcanvas");
+    var frontCanvas = document.getElementById("frontcanvas");
+  </script>
+  <script type="text/javascript" src="polyfill.js"></script>
+  <script type="text/javascript" src="animating.js"></script>
+  <script type="text/javascript" src="lissajous.js"></script>
+  <script type="text/javascript">
+    animating(tick);
+  </script>
+</body>
