@@ -36,6 +36,7 @@ function drawCanvas() {
         for (var c = 0; c < width; ++c) {
             var x = c - width / 2;
             var d = Math.floor(0.002 * nframes * (x*x + y*y + nframes));
+            // XXX assumes endianness:
             pixels[p++] = ((0xFF << 24)
                            | (((d + 170) & 0xFF) << 16)
                            | (((d + 85)  & 0xFF) << 8)
