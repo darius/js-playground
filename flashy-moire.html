@@ -1,0 +1,65 @@
+<head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <meta http-equiv="encoding" content="utf-8">
+</head>
+<canvas id="canvas1" width="800" height="800">
+Random Canvas
+</canvas>
+
+<p><span id="framerate">0</span> frames/second
+
+<script type="text/javascript">
+
+var element   = document.getElementById("canvas1");
+var width     = parseInt(element.getAttribute("width"));
+var height    = parseInt(element.getAttribute("height"));
+var ctx       = element.getContext("2d");
+var imageData = ctx.createImageData(width, height);
+var pixels    = new Int32Array(imageData.data.buffer);
+
+var nframes = 0;
+
+function draw() {
+    drawCanvas();
+    ++nframes;
+    document.getElementById("framerate").innerHTML =
+        Math.round(computeFrameRate());
+}
+
+function drawCanvas() {
+    var p = 0;
+    for (var r = 0; r < height; ++r) {
+        var y = r - height / 2;
+        for (var c = 0; c < width; ++c) {
+            var x = c - width / 2;
+            var d = Math.floor(0.002 * nframes * (x*x + y*y + nframes));
+            pixels[p++] = ((0xFF << 24)
+                           | (((d + 170) & 0xFF) << 16)
+                           | (((d + 85)  & 0xFF) << 8)
+                           | (((d + 0)   & 0xFF)));
+        }
+    }
+    ctx.putImageData(imageData, 0, 0);
+}
+
+// We take the framerate to be the average rate over the last 10 frames.
+// (Or over all frames, if fewer than 10.)
+// frame_times holds the time of each, at position (frame# modulo 10).
+
+var start_time = (new Date()).getTime(); // in msec
+var frame_times =
+    [start_time, start_time, start_time, start_time, start_time,
+     start_time, start_time, start_time, start_time, start_time];
+
+function computeFrameRate() {
+    var now = (new Date()).getTime();
+    var f = nframes % frame_times.length;
+    var then = frame_times[f];
+    frame_times[f] = now;
+    var interval = Math.min(nframes, frame_times.length);
+    return interval / (0.001 * (now - then));
+}
+
+setInterval(draw, 0);
+
+</script>
