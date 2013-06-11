@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <meta http-equiv="encoding" content="utf-8">
+  <style type="text/css">
+    #canvas {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+    }
+  </style>
+</head>
+<body bgcolor="black">
+  <canvas id="canvas" width="1200" height="800">
+  </canvas>
+  <script type="text/javascript">
+    var canvas = document.getElementById("canvas");
+  </script>
+  <script type="text/javascript" src="polyfill.js"></script>
+  <script type="text/javascript" src="animating.js"></script>
+  <script type="text/javascript" src="chladni.js"></script>
+  <script type="text/javascript">
+    animating(tick);
+  </script>
+</body>
