@@ -21,7 +21,7 @@ function setup() {
     for (var y = 0; y < hh; ++y)
         for (var x = 0; x < ww; ++x) {
             magnet[at(x, y)] = randomInt(2);
-            changed[at(x, y)] = 0;
+            changed[at(x, y)] = 0; // TODO: init to 1, rename to lineWidth or something
         }
 }
 setup();
@@ -29,7 +29,7 @@ setup();
 function tick() {
     for (var i = 0; i < 333; ++i)
         randomSlash();
-    redraw();
+    redraw();                 // TODO: redraw only the changed regions?
 }
 
 function fieldFromValue(val) {
@@ -38,6 +38,7 @@ function fieldFromValue(val) {
 
 var anyway = .05;
 
+// TODO: extract to library
 var canvasBounds = canvas.getBoundingClientRect();
 var mouseX = 100;
 var mouseY = 20;
@@ -54,7 +55,7 @@ function randomSlash() {
     var x = 1 + randomInt(ww-2);
     var y = 1 + randomInt(hh-2);
     var p = at(x, y);
-    var field = fieldFromValue(.25 * (magnet[at(x+1,y)]
+    var field = fieldFromValue(.25 * (  magnet[at(x+1,y)]
                                       + magnet[at(x-1,y)]
                                       + magnet[at(x,y+1)]
                                       + magnet[at(x,y-1)]));
@@ -83,6 +84,8 @@ function redraw() {
                 changed[p] -= .25;
             } else if (lw != 1)
                 lw = ctx.lineWidth = 1;
+
+            // TODO: also show local energy via color or something?
             var dir = magnet[p];
             ctx.beginPath();
             ctx.moveTo((x+dir)*10, y*10);
