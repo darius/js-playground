@@ -37,6 +37,7 @@ function fieldFromValue(val) {
 }
 
 var anyway = .05;
+var ferromagnetic = -1;
 
 // TODO: extract to library
 var canvasBounds = canvas.getBoundingClientRect();
@@ -51,6 +52,10 @@ canvas.addEventListener("mousemove", onMousemove);
 // To get the initial position before any mousemove:
 document.addEventListener("mouseover", onMousemove);
 
+canvas.addEventListener("mousedown", function() {
+    ferromagnetic *= -1;
+});
+
 function randomSlash() {
     var x = 1 + randomInt(ww-2);
     var y = 1 + randomInt(hh-2);
@@ -61,9 +66,9 @@ function randomSlash() {
                                       + magnet[at(x,y-1)]));
     var oldval = magnet[p];
     var newval = oldval ^ 1;
-    var oldE = field * fieldFromValue(oldval);
-    var newE = field * fieldFromValue(newval);
-    if (oldE <= newE || Math.random() < anyway) {
+    var oldE = field * fieldFromValue(oldval) * ferromagnetic;
+    var newE = field * fieldFromValue(newval) * ferromagnetic;
+    if (newE <= oldE || Math.random() < anyway) {
         magnet[p] ^= 1;
         changed[p] = 4;
     }
