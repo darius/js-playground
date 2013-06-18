@@ -89,3 +89,11 @@ function tick() {
     time += 1;
     stale = false;
 }
+
+/*
+TODO:
+- extract mousemove stuff to a library
+- comments
+- control over relative rates
+  - should encourage you to try simple ratios
+*/
