@@ -9,6 +9,7 @@ function makeGame(canvasId, width, height, backgroundColor) {
     var ctx = canvas.getContext('2d');
 
     var keyDown = {};
+    // XXX should preventDefault too on arrow keys (optionally)
     window.addEventListener('keydown',
                             function(event) { keyDown[event.keyCode] = true; },
                             false);
