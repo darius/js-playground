@@ -90,7 +90,6 @@ function redraw() {
             } else if (lw != 1)
                 lw = ctx.lineWidth = 1;
 
-            // TODO: also show local energy via color or something?
             var dir = magnet[p];
             ctx.beginPath();
             ctx.moveTo((x+dir)*10, y*10);
@@ -98,3 +97,10 @@ function redraw() {
             ctx.stroke();
         }
 }
+
+/*
+TODO:
+- comments
+- show local energy at each grid square, by color maybe?
+- show each 'hit', transiently, even when it doesn't flip it
+*/
