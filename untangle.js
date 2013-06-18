@@ -2,7 +2,7 @@
 
 var width = canvas.width;
 var height = canvas.height;
-var ctx = canvas.getContext("2d");
+var ctx = canvas.getContext('2d');
 
 function randomInt(n) {
     return (n * Math.random()) | 0;
@@ -48,11 +48,11 @@ function onMousemove(event) {
     mouseY = event.clientY - canvasBounds.top;
     anyway = (1 - mouseY / height) / 10;
 }
-canvas.addEventListener("mousemove", onMousemove);
+canvas.addEventListener('mousemove', onMousemove);
 // To get the initial position before any mousemove:
-document.addEventListener("mouseover", onMousemove);
+document.addEventListener('mouseover', onMousemove);
 
-canvas.addEventListener("mousedown", function() {
+canvas.addEventListener('mousedown', function() {
     ferromagnetic *= -1;
 });
 

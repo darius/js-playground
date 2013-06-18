@@ -2,7 +2,7 @@
 
 var width = canvas.width;
 var height = canvas.height;
-var ctx = canvas.getContext("2d");
+var ctx = canvas.getContext('2d');
 
 var canvasBounds = canvas.getBoundingClientRect();
 var mouseX = 100;
@@ -11,9 +11,9 @@ function onMousemove(event) {
     mouseX = event.clientX - canvasBounds.left;
     mouseY = event.clientY - canvasBounds.top;
 }
-canvas.addEventListener("mousemove", onMousemove);
+canvas.addEventListener('mousemove', onMousemove);
 // To get the initial position before any mousemove:
-document.addEventListener("mouseover", onMousemove);
+document.addEventListener('mouseover', onMousemove);
 
 var tau = 2 * Math.PI;
 

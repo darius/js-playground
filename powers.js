@@ -78,7 +78,7 @@ function onClick(event) {
     refPoint = (refPoint ? null : pointingAt(event));
 }
 
-canvas.addEventListener("click", onClick);
+canvas.addEventListener('click', onClick);
 
 function onMousemove(event) {
     cancelAnimationFrame(nextFrame);
@@ -89,9 +89,9 @@ function onMousemove(event) {
     show(z);
 }
 
-canvas.addEventListener("mousemove", onMousemove);
+canvas.addEventListener('mousemove', onMousemove);
 // To get the initial position before any mousemove:
-document.addEventListener("mouseover", onMousemove);
+document.addEventListener('mouseover', onMousemove);
 
 function onLoad() {
     show({re: 0, im: 0});

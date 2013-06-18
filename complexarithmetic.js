@@ -70,11 +70,11 @@ function onClick(event) {
     show(varA);
 }
 
-canvas.addEventListener("mousemove", onMousemove);
+canvas.addEventListener('mousemove', onMousemove);
 // To get the initial position before any mousemove:
-document.addEventListener("mouseover", onMousemove);
+document.addEventListener('mouseover', onMousemove);
 
-canvas.addEventListener("click", onClick);
+canvas.addEventListener('click', onClick);
 
 function onLoad() {
     show(varA);
