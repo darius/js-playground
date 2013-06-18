@@ -89,6 +89,3 @@ function tick() {
     time += 1;
     stale = false;
 }
-
-function fo() {
-}
