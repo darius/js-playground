@@ -40,17 +40,19 @@ function fingerpaint(canvas, report) {
         var ey = end.y - oy;
         ctx.strokeStyle = color;
         ctx.beginPath();
+        for (var i = 0; i < 4; ++i) {
+            segment( sx,  sy,  ex,  ey);
 
-        segment( sx,  sy,  ex,  ey);
-        segment( sx, -sy,  ex, -ey);
-        segment(-sx, -sy, -ex, -ey);
-        segment(-sx,  sy, -ex,  ey);
+            // Reflect on the x-axis.
+            sy = -sy;
+            ey = -ey;
+            segment( sx,  sy,  ex,  ey);
 
-        segment( sy,  sx,  ey,  ex);
-        segment( sy, -sx,  ey, -ex);
-        segment(-sy, -sx, -ey, -ex);
-        segment(-sy,  sx, -ey,  ex);
-
+            // Reflect on x=y.
+            var tmp;
+            tmp = sx, sx = sy, sy = tmp;
+            tmp = ex, ex = ey, ey = tmp;
+        }
         ctx.stroke();
     }
 
