@@ -5,12 +5,12 @@ function fingerpaint(canvas, report) {
     var oy = height/2;
 
     var ctx = canvas.getContext('2d');
-    ctx.lineWidth = 16;
+    ctx.lineWidth = 8;
     ctx.lineCap = 'round';
 
     var offset = {x: canvas.offsetLeft, y: canvas.offsetTop};
     var points = [];
-    var colors  = ['red', 'green', 'yellow', 'blue', 'magenta', 'orangered'];
+    var colors  = ['rgba(0,255,0,0.2)', 'rgba(255,0,0,0.2)', 'rgba(0,0,255,0.2)', 'rgba(0,128,128,0.2)', 'rgba(128,0,128,0.2)', 'rgba(128,128,0,0.2)'];
 
     function touchstart(event) {
         report('touchstart' + show(event.touches));
@@ -44,12 +44,12 @@ function fingerpaint(canvas, report) {
         segment( sx,  sy,  ex,  ey);
         segment( sx, -sy,  ex, -ey);
         segment(-sx, -sy, -ex, -ey);
-        segment(-sx,  sy, -ex,  sy);
+        segment(-sx,  sy, -ex,  ey);
 
         segment( sy,  sx,  ey,  ex);
         segment( sy, -sx,  ey, -ex);
         segment(-sy, -sx, -ey, -ex);
-        segment(-sy,  sx, -sy,  ex);
+        segment(-sy,  sx, -ey,  ex);
 
         ctx.stroke();
     }
