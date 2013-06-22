@@ -6,7 +6,7 @@ function fingerpaint(canvas, report) {
 
     var ctx = canvas.getContext('2d');
     ctx.lineWidth = 8;
-    ctx.lineCap = 'round';
+    ctx.lineCap = 'butt';
 
     var offset = {x: canvas.offsetLeft, y: canvas.offsetTop};
     var points = [];
