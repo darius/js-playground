@@ -3,9 +3,9 @@
 var width = backCanvas.width;
 var height = backCanvas.height;
 var scale = Math.min(width, height) / 2;
-var ctx = backCanvas.getContext("2d");
+var ctx = backCanvas.getContext('2d');
 
-var frontCtx = frontCanvas.getContext("2d");
+var frontCtx = frontCanvas.getContext('2d');
 
 var backCanvasBounds = backCanvas.getBoundingClientRect();
 var mouseX = 100;
@@ -19,9 +19,9 @@ function onMousemove(event) {
     stale = true;
     // console.log('stale from mousemove'); // XXX may need to filter insignificant moves
 }
-document.addEventListener("mousemove", onMousemove);
+document.addEventListener('mousemove', onMousemove);
 // To get the initial position before any mousemove:
-document.addEventListener("mouseover", onMousemove);
+document.addEventListener('mouseover', onMousemove);
 
 var phaseRate = 0;
 function onMousedown(event) { phaseRate = 0.01; }

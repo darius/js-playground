@@ -146,7 +146,7 @@ function turtleMove(t) {
     }
 }
 
-var ctx = canvas.getContext("2d");
+var ctx = canvas.getContext('2d');
 var imageData = ctx.createImageData(width, height);
 var pixels = new Int32Array(imageData.data.buffer);
 

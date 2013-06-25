@@ -207,7 +207,7 @@ function inCircle(x, y, cx, cy, radius) {
     return Math.pow(x-cx, 2) + Math.pow(y-cy, 2) < radius*radius;
 }
 
-var ctx = canvas.getContext("2d");
+var ctx = canvas.getContext('2d');
 var imageData = ctx.createImageData(width, height);
 var pixels = new Int32Array(imageData.data.buffer);
 

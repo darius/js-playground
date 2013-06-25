@@ -2,7 +2,7 @@
 
 var width = canvas.width;
 var height = canvas.height;
-var ctx = canvas.getContext("2d");
+var ctx = canvas.getContext('2d');
 
 var radius = 2.5;
 var diameter = 2*radius;
