@@ -44,15 +44,3 @@ function tick() {
         ctx.fillText('Give it a while. Try moving the mouse.', width/2 - 100, 50);
     }
 }
-
-function animLoop(render) {
-    requestAnimationFrame(function(then) {
-        function loop(now) {
-            if (!render(now - then, now))
-                requestAnimationFrame(loop);
-            then = now;
-        }
-        if (!render(0, then))
-            requestAnimationFrame(loop)
-    });
-}

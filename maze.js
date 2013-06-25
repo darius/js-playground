@@ -33,15 +33,3 @@ function randomSlash() {
     ctx.lineTo((x+(1-dir))*10, (y+1)*10);
     ctx.stroke();
 }
-
-function animating(render) {
-    requestAnimationFrame(function(then) {
-        function loop(now) {
-            if (!render(now - then, now))
-                requestAnimationFrame(loop);
-            then = now;
-        }
-        if (!render(0, then))
-            requestAnimationFrame(loop)
-    });
-}

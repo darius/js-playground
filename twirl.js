@@ -33,15 +33,3 @@ function tick(delta, time) {
     }
     ctx.stroke();
 }
-
-function animating(render) {
-    requestAnimationFrame(function(then) {
-        function loop(now) {
-            if (!render(now - then, now))
-                requestAnimationFrame(loop);
-            then = now;
-        }
-        if (!render(0, then))
-            requestAnimationFrame(loop)
-    });
-}

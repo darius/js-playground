@@ -189,16 +189,3 @@ var blue       = rgba(  0,   0, 255, 192);
 var yellow     = rgba(  255, 255, 0, 255);
 var dullyellow = rgba(  128, 128, 0, 255);
 var white      = rgba(255, 255, 255, 255);
-
-function animLoop(render) {
-    requestAnimationFrame(function(then) {
-        function loop(now) {
-            if (!render(now - then, now))
-                requestAnimationFrame(loop);
-            then = now;
-        }
-        if (!render(0, then))
-            requestAnimationFrame(loop)
-    });
-}
-
