@@ -19,9 +19,9 @@ function onMousemove(event) {
     stale = true;
     // console.log('stale from mousemove'); // XXX may need to filter insignificant moves
 }
-document.addEventListener('mousemove', onMousemove);
+frontCanvas.addEventListener('mousemove', onMousemove);
 // To get the initial position before any mousemove:
-document.addEventListener('mouseover', onMousemove);
+// document.addEventListener('mouseover', onMousemove);
 
 var phaseRate = 0;
 function onMousedown(event) { phaseRate = 0.01; }
@@ -32,7 +32,7 @@ document.addEventListener('mouseup', onMouseup);
 
 var tau = 2 * Math.PI;
 
-var xomega = tau * 1/200.213432144321;
+var xomega = tau * 1/160;
 var xradius = scale;
 
 var yomega = tau * 1/160;

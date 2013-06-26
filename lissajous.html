@@ -3,34 +3,53 @@
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
   <meta http-equiv="encoding" content="utf-8">
   <style type="text/css">
-    #canvases {
+    #lissajouspane canvas {
       position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      margin: auto;
+      left: 20px;
+      top: 20px;
     }
-    canvas {
+    #speedpane canvas {
       position: absolute;
-      left: 0;
-      right: 0;
+      left: 900px;
+      top: 20px;
+    }
+    #phasepane canvas {
+      position: absolute;
+      left: 900px;
+      top: 440px;
+      border: 1px solid grey;
     }
   </style>
 </head>
 <body bgcolor="black">
-  <div id="canvases">
-    <canvas id="backcanvas" width="1200" height="800"></canvas>
-    <canvas id="frontcanvas" width="1200" height="800"></canvas>
+  <div id="lissajouspane">
+    <canvas id="backcanvas" width="800" height="800"></canvas>
+    <canvas id="frontcanvas" width="800" height="800"></canvas>
+  </div>
+  <div id="speedpane">
+    <canvas id="gridcanvas" width="384" height="384"></canvas>
+    <canvas id="slopecanvas" width="384" height="384"></canvas>
+  </div>
+  <div id="phasepane">
+    <canvas id="phasecanvas" width="384" height="384"></canvas>
   </div>
   <script type="text/javascript">
-    var backCanvas = document.getElementById("backcanvas");
+    var backCanvas  = document.getElementById("backcanvas");
     var frontCanvas = document.getElementById("frontcanvas");
+
+    var gridCanvas  = document.getElementById("gridcanvas");
+    var slopeCanvas = document.getElementById("slopecanvas");
+
+    var phaseCanvas = document.getElementById("phasecanvas");
   </script>
   <script type="text/javascript" src="polyfill.js"></script>
   <script type="text/javascript" src="animating.js"></script>
+  <script type="text/javascript" src="rationallines.js"></script>
+  <script type="text/javascript" src="phasecontrol.js"></script>
   <script type="text/javascript" src="lissajous.js"></script>
   <script type="text/javascript">
+    drawRationalGrid();
+    drawPhase();
     animating(tick);
   </script>
 </body>
