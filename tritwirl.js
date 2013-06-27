@@ -17,12 +17,13 @@ function tick(delta, time) {
     ctx.lineWidth = 4;
     ctx.clearRect(0, 0, width, height);
     ctx.globalCompositeOperation = 'lighter';
-    blah(time);
+    spinspinspin(time);
 }
 
 var tau = 2 * Math.PI;
 
-function blah(time) {
+// TODO: try different rate-gradients in the different directions
+function spinspinspin(time) {
     var phase1 = phasing * time;
     var phase2 = 2 * phasing * time;
     var N = ww + 4;             // XXX
