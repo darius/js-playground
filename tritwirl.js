@@ -29,7 +29,8 @@ function blah(time) {
     for (var r = 0; r < N; ++r)
         for (var g = 0; g < N-r; ++g) {
             var b = N - (r+g);
-
+            
+            // (x,y) from http://www.redblobgames.com/grids/hexagons/#hex-to-pixel
             var cx = radius + (r + g/2) * Math.sqrt(3)/2 * diameter;
             var cy = radius + g * .75 * diameter;
             if (false) {
