@@ -9,6 +9,7 @@ var diameter = 2*radius;
 var minspeed = .001;
 var maxspeed = .010;
 var phasing = .00005;
+var breathing = -.000081;
 
 var ww = (width/diameter) | 0;
 var hh = (height/diameter) | 0;
@@ -26,14 +27,21 @@ var tau = 2 * Math.PI;
 function spinspinspin(time) {
     var phase1 = phasing * time;
     var phase2 = 2 * phasing * time;
-    var N = ww + 4;             // XXX
+
+    var N = ww - 2;             // XXX hand-hacked
+
+    var spacing = diameter * (1 + .2 * Math.sin(breathing * time));
+
+    var x0 = radius + width/2 - (.5*N) * Math.sqrt(3)/2 * spacing;
+    var y0 = height/2 - N * (3/8) * spacing;
+
     for (var r = 0; r < N; ++r)
         for (var g = 0; g < N-r; ++g) {
             var b = N - (r+g);
             
             // (x,y) from http://www.redblobgames.com/grids/hexagons/#hex-to-pixel
-            var cx = radius + (r + g/2) * Math.sqrt(3)/2 * diameter;
-            var cy = radius + g * .75 * diameter;
+            var cx = x0 + (r + g/2) * Math.sqrt(3)/2 * spacing;
+            var cy = y0 + g * .75 * spacing;
             if (false) {
                 drawPieSlice(cx, cy, r/N, time, 'rgba(255,255,255,1)', 0);
                 drawPieSlice(cx, cy, g/N, time, 'rgba(255,255,255,1)', tau/3);
