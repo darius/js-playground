@@ -27,10 +27,10 @@ function onMousedown(event) {
     startMouseY = event.clientY - backCanvasBounds.top;
     startXRadius = xradius;
     startYRadius = yradius;
-    frontCanvas.addEventListener('mousemove', onMousemove);
+    frontCanvas.addEventListener('mousemove', onMousemove, true);
 }
 function onMouseup(event)   {
-    frontCanvas.removeEventListener('mousemove', onMousemove);
+    frontCanvas.removeEventListener('mousemove', onMousemove, true);
     stale = true;
 }
 
@@ -39,11 +39,15 @@ frontCanvas.addEventListener('mouseup', onMouseup);
 
 var tau = 2 * Math.PI;
 
-var xomega = tau * 1/160;
-var xradius = scale;
+var xrate = .5;  // in (0..1]
+var yrate = .5;  // in (0..1]
 
-var yomega = tau * 1/160;
+var xomega = tau/80 * xrate;
+var yomega = tau/80 * yrate;
+
+var xradius = scale;
 var yradius = scale*2/3;
+
 var yphase = 0;
 
 var time = 0;

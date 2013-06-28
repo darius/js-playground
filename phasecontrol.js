@@ -17,18 +17,36 @@ function drawPhase() {
     line(ctx, phaseWidth/2, phaseHeight/2, phaseWidth/2 + x, phaseHeight/2 - y);
 }
 
+var startTheta;
+var startYphase;
+
 var phaseCanvasBounds = phaseCanvas.getBoundingClientRect();
+
 function onPhaseMousemove(event) {
     var mouseX = event.clientX - phaseCanvasBounds.left;
     var mouseY = event.clientY - phaseCanvasBounds.top;
+    var theta = computeTheta(mouseX, mouseY);
+    yphase = startYphase + (theta - startTheta);
+    drawPhase();
+}
+
+function computeTheta(mouseX, mouseY) {
     var x = (mouseX - phaseWidth/2) / (phaseWidth/2);
     var y = (phaseHeight/2 - mouseY) / (phaseHeight/2);
-    var theta = Math.atan2(y, x);
-    yphase = theta;
-    drawPhase();
+    return Math.atan2(y, x);
+}
+
+function onPhaseMousedown(event) {
+    var mouseX = event.clientX - phaseCanvasBounds.left;
+    var mouseY = event.clientY - phaseCanvasBounds.top;
+    startTheta = computeTheta(mouseX, mouseY);
+    startYphase = yphase;
+    phaseCanvas.addEventListener('mousemove', onPhaseMousemove, true);
+}
+function onPhaseMouseup(event)   {
+    phaseCanvas.removeEventListener('mousemove', onPhaseMousemove, true);
     stale = true;
 }
-// XXX only listen to moving over the canvas
-phaseCanvas.addEventListener('mousemove', onPhaseMousemove);
-// To get the initial position before any mousemove:
-//document.addEventListener('mouseover', onPhaseMousemove);
+
+phaseCanvas.addEventListener('mousedown', onPhaseMousedown);
+phaseCanvas.addEventListener('mouseup', onPhaseMouseup);

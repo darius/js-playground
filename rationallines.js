@@ -115,20 +115,35 @@ function disparity(u, v) {
     return Math.abs(u - v) / Math.max(u, v);
 }
 
+var startGridX, startGridY;
+var startXrate, startYrate;
+
 var slopeCanvasBounds = slopeCanvas.getBoundingClientRect();
 function onGridMousemove(event) {
     var mouseX = event.clientX - slopeCanvasBounds.left;
     var mouseY = event.clientY - slopeCanvasBounds.top;
-    if (mouseX === 0 && mouseY === 0) return;
-    var m = (gridHeight - mouseY) / mouseX;
-    highlight(m);
-    var x = mouseX / gridWidth;
-    var y = (gridHeight-1 - mouseY) / gridHeight;
-    xomega = tau * x / 100;
-    yomega = tau * y / 100;
+    var dx = (mouseX - startGridX) / gridWidth;
+    var dy = (startGridY - mouseY) / gridHeight;
+    xrate = Math.max(.01, Math.min(startXrate + dx, 1));
+    yrate = Math.max(.01, Math.min(startYrate + dy, 1));
+    xomega = tau/80 * xrate;
+    yomega = tau/80 * yrate;
+    highlight(yrate / xrate);
+}
+
+function onGridMousedown(event) {
+    startGridX = event.clientX - slopeCanvasBounds.left;
+    startGridY = event.clientY - slopeCanvasBounds.top;
+    startXrate = xrate;
+    startYrate = yrate;
+    slopeCanvas.addEventListener('mousemove', onGridMousemove, true);
+}
+function onGridMouseup(event)   {
+    // XXX I think we have to do something extra to make sure this fires
+    // when you mouseup off the canvas?
+    slopeCanvas.removeEventListener('mousemove', onGridMousemove, true);
     stale = true;
 }
-// XXX only listen to moving over the canvas
-slopeCanvas.addEventListener('mousemove', onGridMousemove);
-// To get the initial position before any mousemove:
-//document.addEventListener('mouseover', onGridMousemove);
+
+slopeCanvas.addEventListener('mousedown', onGridMousedown);
+slopeCanvas.addEventListener('mouseup', onGridMouseup);
