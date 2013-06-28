@@ -8,27 +8,34 @@ var ctx = backCanvas.getContext('2d');
 var frontCtx = frontCanvas.getContext('2d');
 
 var backCanvasBounds = backCanvas.getBoundingClientRect();
+var startMouseX, startMouseY;
+var startXRadius, startYRadius;
 var mouseX = 100;
 var mouseY = 20;
 var stale = true;
 function onMousemove(event) {
-    mouseX = event.clientX - backCanvasBounds.left;
-    mouseY = event.clientY - backCanvasBounds.top;
-    xradius = Math.abs(mouseX - width/2);
-    yradius = Math.abs(mouseY - height/2);
-    stale = true;
-    // console.log('stale from mousemove'); // XXX may need to filter insignificant moves
+    var mouseX = event.clientX - backCanvasBounds.left;
+    var mouseY = event.clientY - backCanvasBounds.top;
+    var dx = mouseX - startMouseX;
+    var dy = mouseY - startMouseY;
+    xradius = Math.abs(startXRadius + dx * (startMouseX < width/2 ? -1 : 1));
+    yradius = Math.abs(startYRadius - dy * (startMouseY > height/2 ? -1 : 1));
 }
-frontCanvas.addEventListener('mousemove', onMousemove);
-// To get the initial position before any mousemove:
-// document.addEventListener('mouseover', onMousemove);
 
-var phaseRate = 0;
-function onMousedown(event) { phaseRate = 0.01; }
-function onMouseup(event)   { phaseRate = 0; stale = true; }
+function onMousedown(event) {
+    startMouseX = event.clientX - backCanvasBounds.left;
+    startMouseY = event.clientY - backCanvasBounds.top;
+    startXRadius = xradius;
+    startYRadius = yradius;
+    frontCanvas.addEventListener('mousemove', onMousemove);
+}
+function onMouseup(event)   {
+    frontCanvas.removeEventListener('mousemove', onMousemove);
+    stale = true;
+}
 
-document.addEventListener('mousedown', onMousedown);
-document.addEventListener('mouseup', onMouseup);
+frontCanvas.addEventListener('mousedown', onMousedown);
+frontCanvas.addEventListener('mouseup', onMouseup);
 
 var tau = 2 * Math.PI;
 
@@ -64,7 +71,6 @@ function tick() {
     ctx.arc(xx, xy, 4, 0, tau, true);
     ctx.fill();
 
-    yphase += phaseRate;
     x = Math.cos(yomega * time + yphase);
     y = Math.sin(yomega * time + yphase);
     var yx = width/2 + x*yradius;
@@ -94,6 +100,4 @@ function tick() {
 TODO:
 - extract mousemove stuff to a library
 - comments
-- control over relative rates
-  - should encourage you to try simple ratios
 */
