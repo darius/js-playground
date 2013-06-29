@@ -7,13 +7,15 @@ function drawPhase() {
     var ctx = phaseCanvas.getContext('2d');
     ctx.clearRect(0, 0, phaseWidth, phaseHeight);
 
-    ctx.strokeStyle = 'white';
     ctx.lineWidth = 1.5;
 
     var r = phaseWidth/2 - 10;
-    var x = r * Math.cos(yphase);
-    var y = r * Math.sin(yphase);
+    var x = r * Math.cos(yphase + tau/4);
+    var y = r * Math.sin(yphase + tau/4);
 
+    ctx.strokeStyle = xcolor;
+    line(ctx, phaseWidth/2, phaseHeight/2, phaseWidth/2, phaseHeight/2 - r);
+    ctx.strokeStyle = ycolor;
     line(ctx, phaseWidth/2, phaseHeight/2, phaseWidth/2 + x, phaseHeight/2 - y);
 }
 
