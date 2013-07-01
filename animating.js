@@ -5,6 +5,10 @@
 // by requestAnimationFrame, so the times are when canvas update is
 // scheduled, not when the render function is called.
 function animating(render) {
+    // We don't use Date.now() to initialize `then` because
+    // requestAnimationFrame in some browsers supplies times from
+    // performance.now() instead; subtracting a Date.now() would give
+    // screwy results in those browsers.
     scheduleFrame(function(then) {
         function loop(now) {
             if (!render(now - then, now))
