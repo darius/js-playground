@@ -55,7 +55,6 @@ function spinspinspin(time) {
     var phase1 = phasing * time;
     var phase2 = 2 * phasing * time;
 
-
     var spacing = diameter * (1 + .2 * Math.sin(breathing * time));
 
     var x0 = radius + width/2 - (.5*N) * Math.sqrt(3)/2 * spacing;
