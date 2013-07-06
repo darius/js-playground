@@ -28,10 +28,10 @@ function tick() {
     ctx.fillStyle = 'white';
     var dotWidth = 0.5 + 100 * mouseX/width;
     var dotHeight = 0.5 + 50 * mouseY/height;
-    for (var x = 0; x < width-dotWidth; ++x) {
-        var omega = lofreq * (x/width) + hifreq * (1 - x/width);
+    for (var y = 0; y < height-dotHeight; ++y) {
+        var omega = lofreq * (y/height) + hifreq * (1 - y/height);
         var f = Math.sin(tau * omega * time);
-        var y = (1+f) * (height-dotHeight)/2;
+        var x = (1+f) * (width-dotWidth)/2;
         ctx.fillRect(x, y, dotWidth, dotHeight);
     }
     var dr = (Math.random() - .5) * Math.max(.01, Math.abs(rate/10));

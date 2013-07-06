@@ -26,7 +26,7 @@ function areWeFastEnough(delta) {
     var all = true;
     var any = false;
     for (var i = 0; i < recentDeltas.length; ++i) {
-        if (recentDeltas[i] < 67) // We want at least 15 fps
+        if (recentDeltas[i] < 41) // We want at least 25 fps
             any = true;
         else
             all = false;
