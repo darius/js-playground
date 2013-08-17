@@ -65,7 +65,7 @@ function draw() {
     var p = y * width
     for (var x = 0; x < width; ++x)
         pixels[p+x] = patchColor(grid[x]);
-    ctx.putImageData(imageData, 0, 0); // TODO pass dirty rect
+    ctx.putImageData(imageData, 0, 0, 0, y, width, 1);
 }
 
 function patchColor(patch) {
