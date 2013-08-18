@@ -21,7 +21,9 @@ var grid = new Int8Array(width);
 
 // Seed state
 grid[width/2] = 1;
-grid[width/2+1] = 1;
+//grid[width/2+1] = 1;
+//grid[width/2+11] = 1;
+//grid[width/2+30] = 1;
 
 var nticks = 0;
 
@@ -48,9 +50,9 @@ function step() {
 function update(state) {
     switch (state) {
         case 0: return 0;
-        case 1: return 2;
-        case 2: return 1;
-        case 3: return 3;
+        case 1: return 1;
+        case 2: return 3;
+        case 3: return 2;
         default: assert(false);
     }
 }
