@@ -26,6 +26,9 @@ grid[width/2] = 1;
 //grid[width/2+30] = 1;
 
 var nticks = 0;
+var forward = true;
+
+canvas.addEventListener('mousedown', function() { forward = !forward; });
 
 function tick() {
     ++nticks;
@@ -35,6 +38,7 @@ function tick() {
 
 function step() {
     var phase = nticks % 2;
+    if (!forward) phase = 1 - phase;
     for (var x = phase; x < width - 1; x += 2) {
         var state = update((grid[x] << 1) + grid[x+1]);
         grid[x] = state >>> 1;
