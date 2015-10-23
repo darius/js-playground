@@ -3,6 +3,8 @@
 // Make Chladni figures by crude physical simulation of a 
 // grid of coupled oscillators all driven together.
 // XXX this sucks, strip it down until you know why
+// check out http://encinographic.blogspot.com/2014/05/sim-class-wave-equation-in-2d.html
+// and http://blog.kaistale.com/?p=1295
 
 var width = canvas.width;
 var height = canvas.height;
