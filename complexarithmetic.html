@@ -4,16 +4,30 @@
   <meta http-equiv="encoding" content="utf-8">
 </head>
 
-<body bgcolor="lightgrey" onload="onLoad()">
+<body bgcolor="#fff" onload="onLoad()">
   <canvas id="canvas" width="1490" height="750"
-          style="border:1px solid black">
+          style="background-color: #ddd"
+          >
   </canvas>
-  <br>Click to change <span style="color:red">a</span>. For an
+  <br><label><input type="checkbox" id="add" checked>a+b</label>
+  <br><label><input type="checkbox" id="sub">a&minus;b</label>
+  <br><label><input type="checkbox" id="mul">ab (multiply)</label>
+  <br><label><input type="checkbox" id="div">a/b</label>
+  <br><label><input type="checkbox" id="subrev">b&minus;a</label>
+  <br><label><input type="checkbox" id="divrev">b/a</label>
+
+  <p>Click on the canvas to change <span style="color:red">a</span>. For an
   explanation of these operations,
   see <a href="http://www.clarku.edu/~djoyce/complex/">Dave's Short
   Course on Complex Numbers</a>.
   <script type="text/javascript">
     var canvas = document.getElementById("canvas");
+    var add_checkbox = document.getElementById("add");
+    var sub_checkbox = document.getElementById("sub");
+    var subrev_checkbox = document.getElementById("subrev");
+    var mul_checkbox = document.getElementById("mul");
+    var div_checkbox = document.getElementById("div");
+    var divrev_checkbox = document.getElementById("divrev");
   </script>
   <script type="text/javascript" src="complex.js"></script>
   <script type="text/javascript" src="complexarithmetic.js"></script>
