@@ -1,6 +1,13 @@
 'use strict';
 
-// Adapted from https://gist.github.com/paulirish/1579671
+// Adapted from https://gist.github.com/paulirish/1579671 which derived from 
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+// requestAnimationFrame polyfill by Erik Möller.
+// Fixes from Paul Irish, Tino Zijdel, Andrew Mao, Klemen Slavič, Darius Bacon
+
+// MIT license
 
 if (!Date.now)
     Date.now = function() { return new Date().getTime(); };
@@ -13,7 +20,8 @@ if (!Date.now)
         window.cancelAnimationFrame = (window[vp+'CancelAnimationFrame']
                                    || window[vp+'CancelRequestAnimationFrame']);
     }
-    if (!window.requestAnimationFrame || !window.cancelAnimationFrame) {
+    if (/iP(ad|hone|od).*OS 6/.test(window.navigator.userAgent) // iOS6 is buggy
+        || !window.requestAnimationFrame || !window.cancelAnimationFrame) {
         var lastTime = 0;
         window.requestAnimationFrame = function(callback) {
             var now = Date.now();
