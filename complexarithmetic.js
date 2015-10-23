@@ -25,7 +25,7 @@ function clear() {
         for (j = 1; j <= 9; ++j) {
             gridLine(ctx, (i-1 + j/10) * scale, -height/2, (i-1 + j/10) * scale, height/2);
         }
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 1;
         gridLine(ctx,  i * scale, -height/2,  i * scale, height/2);
     }
     for (i = 1; (i-1) * scale <= height/2; ++i) { // XXX hack
@@ -33,7 +33,7 @@ function clear() {
         for (j = 1; j <= 9; ++j) {
             gridLine(ctx, -width/2, (i-1 + j/10) * scale, width/2, (i-1 + j/10) * scale);
         }
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 1;
         gridLine(ctx, -width/2, i * scale, width/2, i * scale);
     }
 
