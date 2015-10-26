@@ -13,8 +13,8 @@ var tau = 2*Math.PI;
 
 var scene = [];            // Array of arrows
 var selection = [];        // Array of indices into scene
-var draggingState = false; // false/"pan"/"pinch"/"drag" for nothing/adding/multiplying/moving
-var draggingWhich;         // When draggingState is "drag", an index into scene
+var draggingState = false; // false/'pan'/'pinch'/'drag' for nothing/adding/multiplying/moving
+var draggingWhich;         // When draggingState is 'drag', an index into scene
 
 function addArrow(z) {
     var arrow = {at: z, by: null, pinned: false};
@@ -134,6 +134,10 @@ function mouseCoords(event) {
 function pointingAt(event) {
     var p = mouseCoords(event);
 //    p.x -= 5, p.y -= 5;     // offset from pointer, to make the point more visible
+    return arrowFrom(p);
+}
+
+function arrowFrom(p) {
     return {re: (p.x - width/2) / scale,
             im: (height/2 - p.y) / scale};
 }
@@ -169,9 +173,15 @@ function onMousedown(event) {
 }
 
 function onMousemove(event) {
-    // TODO: drag
-    if (!draggingState) {
-//        if (
+    if (!draggingState && mouseStart !== null) {
+        var i = selecting(arrowFrom(mouseStart));
+        if (0 < i) {
+            draggingState = 'drag';
+            draggingWhich = i;
+        }
+    }
+    if (draggingState === 'drag') {
+        scene[draggingWhich].at = pointingAt(event);
     }
     show();
 }
@@ -184,6 +194,7 @@ function onMouseup(event) {
         ;
     }
     mouseStart = null;
+    draggingState = null;
     show();
 }
 
