@@ -11,23 +11,20 @@ var scale = height / 5;
 
 var tau = 2*Math.PI;
 
-// XXX i'm using the word 'arrow' inconsistently
-
 var scene = [];            // Array of arrows
 var selection = [];        // Array of indices into scene
 var draggingState = false; // false/'pan'/'pinch'/'drag' for nothing/adding/multiplying/moving
 var draggingWhich;         // When draggingState is 'drag', an index into scene, the arrow to drag around
-var adding;                // When draggingState is 'pan', an arrow for the current offset
-var multiplying;           // When draggingState is 'pinch', an arrow for the current factor
+var adding;                // When draggingState is 'pan', a cnum (complex number) for the current offset
+var multiplying;           // When draggingState is 'pinch', a cnum for the current factor
 
 var nextId = 0;
 
-function addArrow(z, by) {
+function makeArrow(z, by) {
     var arrow = {at: z,
                  by: by,
                  pinned: false,
                  name: christen(by)};
-    console.log(arrow.name);
     scene.push(arrow);
 }
 
@@ -210,7 +207,7 @@ function onClick(at) {
     if (0 <= i) {
         toggleSelection(i);
     } else {
-        addArrow(at);
+        makeArrow(at);
     }
 }
 
@@ -261,16 +258,16 @@ function onMouseup(event) {
         var target = selecting(atFrom(mpos));
         if (0 <= target) {
             selection.forEach(function(i) {
-                addArrow(add(adding, scene[i].at),
-                         {op: '+', args: [i, target]});
+                makeArrow(add(adding, scene[i].at),
+                          {op: '+', args: [i, target]});
             });
         }
     } else if (draggingState === 'pinch') {
         var target = selecting(atFrom(mpos));
         if (0 <= target) {
             selection.forEach(function(i) {
-                addArrow(mul(multiplying, scene[i].at),
-                         {op: '', args: [i, target]});
+                makeArrow(mul(multiplying, scene[i].at),
+                          {op: '', args: [i, target]});
             });
         }
     } else {
