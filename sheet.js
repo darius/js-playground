@@ -34,8 +34,15 @@ function addArrow(z, by) {
 function christen(by) {
     if (by === undefined)
         return String.fromCharCode(97+nextId++);
-    else 
-        return '(' + scene[by.args[0]].name + by.op + scene[by.args[1]].name + ')';
+    else {
+        var L = parenthesize(scene[by.args[0]].name);
+        var R = parenthesize(scene[by.args[1]].name);
+        return L + by.op + R;
+    }
+}
+
+function parenthesize(name) {
+    return name.length === 1 ? name : '(' + name + ')';
 }
 
 function recompute(by) {
