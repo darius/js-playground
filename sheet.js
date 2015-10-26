@@ -11,8 +11,10 @@ var scale = height / 5;
 
 var tau = 2*Math.PI;
 
-var scene = [];                 // Array of arrows
-var selection = [];             // Array of indices into scene
+var scene = [];            // Array of arrows
+var selection = [];        // Array of indices into scene
+var draggingState = false; // false/"pan"/"pinch"/"drag" for nothing/adding/multiplying/moving
+var draggingWhich;         // When draggingState is "drag", an index into scene
 
 function addArrow(z) {
     var arrow = {at: z, by: null, pinned: false};
@@ -32,6 +34,10 @@ function selecting(at) {
     return result;
 }
 
+function near(u, v) {
+    return distance2(u, v) <= selectingRadius;
+}
+
 function distance2(u, v) {
     return squaredMagnitude(sub(u, v));
 }
@@ -40,7 +46,7 @@ function distance2(u, v) {
 function toggleSelection(i) {
     for (var j = 0; j < selection.length; ++j) {
         if (selection[j] === i) {
-            selection.splice(i, 1);
+            selection.splice(j, 1);
             return;
         }
     }
@@ -88,8 +94,8 @@ function clear() {
 
     ctx.lineWidth = 1;
     ctx.fillStyle = 'blue';
-    plot({re: 0, im: 0}, '0', 8, 18);
-    plot({re: 1, im: 0}, '1', 8, 18);
+    plot(zero, '0', 8, 18);
+    plot(one,  '1', 8, 18);
     ctx.font = 'italic ' + font;
     plot({re: 0, im: 1}, 'i', 8, 18);
     ctx.font = font;
@@ -148,10 +154,11 @@ function plotArrow(arrow, i) {
 
 function onClick(at) {
     var i = selecting(at);
-    if (0 <= i)
+    if (0 <= i) {
         toggleSelection(i);
-    else
+    } else {
         addArrow(at);
+    }
 }
 
 var mouseStart = null;
@@ -163,6 +170,9 @@ function onMousedown(event) {
 
 function onMousemove(event) {
     // TODO: drag
+    if (!draggingState) {
+//        if (
+    }
     show();
 }
 

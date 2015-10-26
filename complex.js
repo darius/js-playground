@@ -1,5 +1,8 @@
 'use strict';
 
+var zero = {re: 0, im: 0};
+var one  = {re: 1, im: 0};
+
 function squaredMagnitude(v) {
     return v.re*v.re + v.im*v.im;
 }
