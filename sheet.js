@@ -38,6 +38,16 @@ function christen(by) {
         return '(' + scene[by.args[0]].name + by.op + scene[by.args[1]].name + ')';
 }
 
+function recompute(by) {
+    var arg0 = scene[by.args[0]].at;
+    var arg1 = scene[by.args[1]].at;
+    switch (by.op) {
+        case "+": return add(arg0, arg1);
+        case "*": return mul(arg0, arg1);
+        default: throw new Error("can't happen");
+    }
+}
+
 var selectingRadius = 0.2;
 
 function selecting(at) {
@@ -167,6 +177,12 @@ function show() {
         plot(adding, null, 0, 0, true);
     else if (draggingState === 'pinch')
         plot(multiplying, null, 0, 0, true);
+    else if (draggingState === 'drag')
+        scene.forEach(function(arrow) {
+            if (arrow.by !== undefined) {
+                arrow.at = recompute(arrow.by);
+            }
+        });
     selection.forEach(function(i) {
         var at = scene[i].at;
         if (draggingState === 'pan')
@@ -199,9 +215,11 @@ function onMousedown(event) {
     var at = atFrom(mouseStart);
     var i = selecting(at);
     if (0 <= i) {
-        console.log('to drag');
-        draggingState = 'drag';
-        draggingWhich = i;
+        if (scene[i].by === undefined) {
+            console.log('to drag');
+            draggingState = 'drag';
+            draggingWhich = i;
+        }
     } else if (near(at, zero)) {
         console.log('to pan');
         draggingState = 'pan';
