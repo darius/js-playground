@@ -42,8 +42,8 @@ function recompute(by) {
     var arg0 = scene[by.args[0]].at;
     var arg1 = scene[by.args[1]].at;
     switch (by.op) {
-        case "+": return add(arg0, arg1);
-        case "*": return mul(arg0, arg1);
+        case '+': return add(arg0, arg1);
+        case '':  return mul(arg0, arg1);
         default: throw new Error("can't happen");
     }
 }
@@ -264,7 +264,7 @@ function onMouseup(event) {
         if (0 <= target) {
             selection.forEach(function(i) {
                 addArrow(mul(multiplying, scene[i].at),
-                         {op: '*', args: [i, target]});
+                         {op: '', args: [i, target]});
             });
         }
     } else {
