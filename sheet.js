@@ -11,11 +11,14 @@ var scale = height / 5;
 
 var tau = 2*Math.PI;
 
+// XXX i'm using the word 'arrow' inconsistently
+
 var scene = [];            // Array of arrows
 var selection = [];        // Array of indices into scene
 var draggingState = false; // false/'pan'/'pinch'/'drag' for nothing/adding/multiplying/moving
 var draggingWhich;         // When draggingState is 'drag', an index into scene, the arrow to drag around
 var adding;                // When draggingState is 'pan', an arrow for the current offset
+var multiplying;           // When draggingState is 'pinch', an arrow for the current factor
 
 function addArrow(z) {
     var arrow = {at: z, by: null, pinned: false};
@@ -149,10 +152,14 @@ function show() {
     ctx.fillStyle = 'red';
     if (draggingState === 'pan')
         plot(adding, null, 0, 0, true);
+    else if (draggingState === 'pinch')
+        plot(multiplying, null, 0, 0, true);
     selection.forEach(function(i) {
         var at = scene[i].at;
         if (draggingState === 'pan')
             at = add(adding, at);
+        else if (draggingState === 'pinch')
+            at = mul(multiplying, at);
         plot(at, null, 0, 0, true);
     });
     ctx.fillStyle = 'black';
@@ -186,6 +193,10 @@ function onMousedown(event) {
         console.log('to pan');
         draggingState = 'pan';
         adding = zero;
+    } else if (near(at, one)) {
+        console.log('to pan');
+        draggingState = 'pinch';
+        multiplying = one;
     } else {
         console.log('to false');
         draggingState = false;
@@ -198,10 +209,13 @@ function onMousemove(event) {
         scene[draggingWhich].at = pointingAt(event);
     } else if (draggingState === 'pan') {
         adding = sub(pointingAt(event), atFrom(mouseStart));
+    } else if (draggingState === 'pinch') {
+        multiplying = add(one, sub(pointingAt(event), atFrom(mouseStart)));
     }
     show();
 }
 
+// XXX does mouseup ever have different coords from the last mousemove?
 function onMouseup(event) {
     var mpos = mouseCoords(event);
     if (mouseStart.x === mpos.x && mouseStart.y === mpos.y) {
@@ -211,6 +225,13 @@ function onMouseup(event) {
         if (0 <= target) {
             selection.forEach(function(i) {
                 addArrow(add(adding, scene[i].at));
+            });
+        }
+    } else if (draggingState === 'pinch') {
+        var target = selecting(atFrom(mpos));
+        if (0 <= target) {
+            selection.forEach(function(i) {
+                addArrow(mul(multiplying, scene[i].at));
             });
         }
     } else {
