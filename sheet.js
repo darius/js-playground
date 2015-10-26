@@ -14,7 +14,8 @@ var tau = 2*Math.PI;
 var scene = [];            // Array of arrows
 var selection = [];        // Array of indices into scene
 var draggingState = false; // false/'pan'/'pinch'/'drag' for nothing/adding/multiplying/moving
-var draggingWhich;         // When draggingState is 'drag', an index into scene
+var draggingWhich;         // When draggingState is 'drag', an index into scene, the arrow to drag around
+var adding;                // When draggingState is 'pan', an arrow for the current offset
 
 function addArrow(z) {
     var arrow = {at: z, by: null, pinned: false};
@@ -31,6 +32,7 @@ function selecting(at) {
             && (result < 0 || d2 < distance2(at, scene[result].at)))
             result = i;
     });
+    console.log('selecting', result);
     return result;
 }
 
@@ -134,10 +136,10 @@ function mouseCoords(event) {
 function pointingAt(event) {
     var p = mouseCoords(event);
 //    p.x -= 5, p.y -= 5;     // offset from pointer, to make the point more visible
-    return arrowFrom(p);
+    return atFrom(p);
 }
 
-function arrowFrom(p) {
+function atFrom(p) {
     return {re: (p.x - width/2) / scale,
             im: (height/2 - p.y) / scale};
 }
@@ -145,8 +147,13 @@ function arrowFrom(p) {
 function show() {
     clear();
     ctx.fillStyle = 'red';
+    if (draggingState === 'pan')
+        plot(adding, null, 0, 0, true);
     selection.forEach(function(i) {
-        plot(scene[i].at, null, 0, 0, true);
+        var at = scene[i].at;
+        if (draggingState === 'pan')
+            at = add(adding, at);
+        plot(at, null, 0, 0, true);
     });
     ctx.fillStyle = 'black';
     scene.forEach(plotArrow);
@@ -169,19 +176,28 @@ var mouseStart = null;
 
 function onMousedown(event) {
     mouseStart = mouseCoords(event);
+    var at = atFrom(mouseStart);
+    var i = selecting(at);
+    if (0 <= i) {
+        console.log('to drag');
+        draggingState = 'drag';
+        draggingWhich = i;
+    } else if (near(at, zero)) {
+        console.log('to pan');
+        draggingState = 'pan';
+        adding = zero;
+    } else {
+        console.log('to false');
+        draggingState = false;
+    }
     show();
 }
 
 function onMousemove(event) {
-    if (!draggingState && mouseStart !== null) {
-        var i = selecting(arrowFrom(mouseStart));
-        if (0 < i) {
-            draggingState = 'drag';
-            draggingWhich = i;
-        }
-    }
     if (draggingState === 'drag') {
         scene[draggingWhich].at = pointingAt(event);
+    } else if (draggingState === 'pan') {
+        adding = sub(pointingAt(event), atFrom(mouseStart));
     }
     show();
 }
@@ -190,11 +206,19 @@ function onMouseup(event) {
     var mpos = mouseCoords(event);
     if (mouseStart.x === mpos.x && mouseStart.y === mpos.y) {
         onClick(pointingAt(event));
+    } else if (draggingState === 'pan') {
+        var target = selecting(atFrom(mpos));
+        if (0 <= target) {
+            selection.forEach(function(i) {
+                addArrow(add(adding, scene[i].at));
+            });
+        }
     } else {
         ;
     }
     mouseStart = null;
-    draggingState = null;
+    console.log('to false');
+    draggingState = false;
     show();
 }
 
