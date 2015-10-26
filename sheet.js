@@ -168,7 +168,6 @@ function mouseCoords(event) {
 
 function pointingAt(event) {
     var p = mouseCoords(event);
-//    p.x -= 5, p.y -= 5;     // offset from pointer, to make the point more visible
     return atFrom(p);
 }
 
@@ -286,9 +285,6 @@ function onMouseup(event) {
 canvas.addEventListener('mousedown', onMousedown);
 canvas.addEventListener('mousemove', onMousemove);
 canvas.addEventListener('mouseup',   onMouseup);
-
-// To get the initial position before any mousemove:
-// document.addEventListener('mouseover', onMousemove);
 
 function onLoad() {
     show();
