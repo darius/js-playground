@@ -20,9 +20,22 @@ var draggingWhich;         // When draggingState is 'drag', an index into scene,
 var adding;                // When draggingState is 'pan', an arrow for the current offset
 var multiplying;           // When draggingState is 'pinch', an arrow for the current factor
 
-function addArrow(z) {
-    var arrow = {at: z, by: null, pinned: false};
+var nextId = 0;
+
+function addArrow(z, by) {
+    var arrow = {at: z,
+                 by: by,
+                 pinned: false,
+                 name: christen(by)};
+    console.log(arrow.name);
     scene.push(arrow);
+}
+
+function christen(by) {
+    if (by === undefined)
+        return String.fromCharCode(97+nextId++);
+    else 
+        return '(' + scene[by.args[0]].name + by.op + scene[by.args[1]].name + ')';
 }
 
 var selectingRadius = 0.2;
@@ -167,7 +180,7 @@ function show() {
 }
 
 function plotArrow(arrow, i) {
-    plot(arrow.at, String.fromCharCode(97+i), -16, -8);
+    plot(arrow.at, arrow.name, -16, -8);
 }
 
 function onClick(at) {
@@ -224,14 +237,16 @@ function onMouseup(event) {
         var target = selecting(atFrom(mpos));
         if (0 <= target) {
             selection.forEach(function(i) {
-                addArrow(add(adding, scene[i].at));
+                addArrow(add(adding, scene[i].at),
+                         {op: '+', args: [i, target]});
             });
         }
     } else if (draggingState === 'pinch') {
         var target = selecting(atFrom(mpos));
         if (0 <= target) {
             selection.forEach(function(i) {
-                addArrow(mul(multiplying, scene[i].at));
+                addArrow(mul(multiplying, scene[i].at),
+                         {op: '*', args: [i, target]});
             });
         }
     } else {
