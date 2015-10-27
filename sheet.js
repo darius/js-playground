@@ -1,5 +1,8 @@
 'use strict';
 
+var showName   = true;
+var showWhence = false;
+
 var canvasBounds = canvas.getBoundingClientRect();
 var width        = canvas.width;
 var height       = canvas.height;
@@ -169,7 +172,7 @@ function plot(z, label, offset, big) {
     ctx.beginPath();
     ctx.arc(x, y, big ? 10 : 3, 0, tau);
     ctx.fill();
-    if (label) {
+    if (label && showName) {
         if (offset === undefined)
             x += 7, y += 5;
         else
@@ -219,12 +222,40 @@ function show() {
         plot(at, null, undefined, true);
     });
     ctx.fillStyle = 'black';
+    ctx.strokeStyle = 'green';
     scene.forEach(plotArrow);
     ctx.restore();
 }
 
 function plotArrow(arrow, i) {
+    if (arrow.by) {
+        switch (arrow.by.op) {
+        case '+':
+            var p0 = scene[arrow.by.args[0]].at;
+            var p1 = arrow.at;
+            line_too(ctx, scale*p0.re, scale*p0.im, scale*p1.re, scale*p1.im);
+            break;
+        case '':
+            var p0 = scene[arrow.by.args[0]].at;
+            var p1 = arrow.at;
+//            var d = Math.sqrt(mul(p0, p0) + mul(p1, p1));
+            var cpx = (p0.re + p1.re) * 1.4;
+            var cpy = (p0.im + p1.im) * 1.4;
+            ctx.beginPath();
+            ctx.moveTo(scale*p0.re, scale*p0.im);
+            ctx.quadraticCurveTo(scale*cpx, scale*cpy, scale*p1.re, scale*p1.im); // XXX rough rough rough
+            ctx.stroke();            
+            break;
+        }
+    }
     plot(arrow.at, arrow.name);
+}
+
+function line_too(ctx, x0, y0, x1, y1) {
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
 }
 
 function onClick(at) {
