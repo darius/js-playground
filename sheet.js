@@ -307,6 +307,22 @@ canvas.addEventListener('mousedown', onMousedown);
 canvas.addEventListener('mousemove', onMousemove);
 canvas.addEventListener('mouseup',   onMouseup);
 
+function onTouchstart(event) {
+    event.touches;
+}
+
+function onTouchmove(event) {
+    event.touches;
+}
+
+function onTouchend(event) {
+    event.touches;
+}
+
+canvas.addEventListener('touchstart', onTouchstart, false);
+canvas.addEventListener('touchmove',  onTouchmove,  false);
+canvas.addEventListener('touchend',   onTouchend,   false);
+
 function onLoad() {
     show();
 }
