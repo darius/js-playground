@@ -280,7 +280,7 @@ function onMouseup(event) {
         var target = selecting(atFrom(mpos));
         if (0 <= target) {
             selection.forEach(function(i) {
-                makeArrow(add(adding, scene[i].at),
+                makeArrow(add(scene[target].at, scene[i].at),
                           {op: '+', args: [i, target]});
             });
         }
@@ -288,7 +288,7 @@ function onMouseup(event) {
         var target = selecting(atFrom(mpos));
         if (0 <= target) {
             selection.forEach(function(i) {
-                makeArrow(mul(multiplying, scene[i].at),
+                makeArrow(mul(scene[target].at, scene[i].at),
                           {op: '', args: [i, target]});
             });
         }
