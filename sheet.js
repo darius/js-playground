@@ -112,7 +112,7 @@ function clear() {
 
     ctx.strokeStyle = 'grey';
     for (i = 1; (i-1) * scale <= width/2; ++i) { // XXX hack
-        ctx.lineWidth = .25;
+        ctx.lineWidth = .2;
         for (j = 1; j <= 9; ++j) {
             gridLine(ctx, (i-1 + j/10) * scale, -height/2, (i-1 + j/10) * scale, height/2);
         }
@@ -120,7 +120,7 @@ function clear() {
         gridLine(ctx, i * scale, -height/2, i * scale, height/2);
     }
     for (i = 1; (i-1) * scale <= height/2; ++i) { // XXX hack
-        ctx.lineWidth = .25;
+        ctx.lineWidth = .2;
         for (j = 1; j <= 9; ++j) {
             gridLine(ctx, -width/2, (i-1 + j/10) * scale, width/2, (i-1 + j/10) * scale);
         }
@@ -241,6 +241,7 @@ var mouseStart = null;
 
 function onMousedown(event) {
     mouseStart = mouseCoords(event);
+    console.log('mousedown ' + mouseStart.x + ',' + mouseStart.y);
     var at = atFrom(mouseStart);
     var i = selecting(at);
     if (0 <= i) {
@@ -274,6 +275,7 @@ function onMousemove(event) {
 // XXX does mouseup ever have different coords from the last mousemove?
 function onMouseup(event) {
     var mpos = mouseCoords(event);
+    console.log('mouseup ' + mpos.x + ',' + mpos.y);
     if (mouseStart.x === mpos.x && mouseStart.y === mpos.y) {
         onClick(pointingAt(event));
     } else if (draggingState === 'pan') {
@@ -305,15 +307,33 @@ canvas.addEventListener('mousemove', onMousemove);
 canvas.addEventListener('mouseup',   onMouseup);
 
 function onTouchstart(event) {
-    event.touches;
+    event.preventDefault();     // to disable mouse events
+    if (event.touches.length === 1) {
+        event.clientX = event.touches[0].pageX; // XXX make it look like a mouse event
+        event.clientY = event.touches[0].pageY;
+        mouseMoved = mouseCoords(event);
+        onMousedown(event);
+    }
 }
 
+var mouseMoved = null;
+
 function onTouchmove(event) {
-    event.touches;
+    if (event.touches.length === 1) {
+        event.clientX = event.touches[0].pageX; // XXX make it look like a mouse event
+        event.clientY = event.touches[0].pageY;
+        mouseMoved = mouseCoords(event);
+        onMousemove(event);
+    }
 }
 
 function onTouchend(event) {
-    event.touches;
+    if (event.touches.length === 0) {
+        event.clientX = mouseMoved.x + canvasBounds.left; // XXX make it look like a mouse event
+        event.clientY = mouseMoved.y + canvasBounds.top;
+        onMouseup(event);
+    }
+    mouseMoved = null;
 }
 
 canvas.addEventListener('touchstart', onTouchstart, false);
