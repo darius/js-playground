@@ -5,8 +5,6 @@ var width        = canvas.width;
 var height       = canvas.height;
 var ctx          = canvas.getContext('2d');
 
-// console.log('ok ' + ctx.save);
-
 var font = '12pt Georgia';
 
 var constLabelOffset = {x: -14, y: 8};
@@ -111,20 +109,21 @@ function clear() {
     }
 
     ctx.strokeStyle = 'grey';
+    ctx.lineWidth = 1;
     for (i = 1; (i-1) * scale <= width/2; ++i) { // XXX hack
-        ctx.lineWidth = .2;
+        ctx.globalAlpha = .25;
         for (j = 1; j <= 9; ++j) {
             gridLine(ctx, (i-1 + j/10) * scale, -height/2, (i-1 + j/10) * scale, height/2);
         }
-        ctx.lineWidth = 1;
+        ctx.globalAlpha = 1;
         gridLine(ctx, i * scale, -height/2, i * scale, height/2);
     }
     for (i = 1; (i-1) * scale <= height/2; ++i) { // XXX hack
-        ctx.lineWidth = .2;
+        ctx.globalAlpha = .25;
         for (j = 1; j <= 9; ++j) {
             gridLine(ctx, -width/2, (i-1 + j/10) * scale, width/2, (i-1 + j/10) * scale);
         }
-        ctx.lineWidth = 1;
+        ctx.globalAlpha = 1;
         gridLine(ctx, -width/2, i * scale, width/2, i * scale);
     }
 
@@ -241,7 +240,6 @@ var mouseStart = null;
 
 function onMousedown(event) {
     mouseStart = mouseCoords(event);
-    console.log('mousedown ' + mouseStart.x + ',' + mouseStart.y);
     var at = atFrom(mouseStart);
     var i = selecting(at);
     if (0 <= i) {
@@ -275,7 +273,6 @@ function onMousemove(event) {
 // XXX does mouseup ever have different coords from the last mousemove?
 function onMouseup(event) {
     var mpos = mouseCoords(event);
-    console.log('mouseup ' + mpos.x + ',' + mpos.y);
     if (mouseStart.x === mpos.x && mouseStart.y === mpos.y) {
         onClick(pointingAt(event));
     } else if (draggingState === 'pan') {
