@@ -7,6 +7,9 @@ var ctx          = canvas.getContext('2d');
 
 var font = '12pt Georgia';
 
+var constLabelOffset = {x: -14, y: 8};
+var labelOffset = {x: 8, y: -18};
+
 var scale = height / 5;
 
 var tau = 2*Math.PI;
@@ -142,10 +145,10 @@ function clear() {
 
     ctx.lineWidth = 1;
     ctx.fillStyle = 'blue';
-    plot(zero, '0', 8, 18);
-    plot(one,  '1', 8, 18);
+    plot(zero, '0', constLabelOffset);
+    plot(one,  '1', constLabelOffset);
     ctx.font = 'italic ' + font;
-    plot({re: 0, im: 1}, 'i', 8, 18);
+    plot({re: 0, im: 1}, 'i', constLabelOffset);
     ctx.font = font;
 }
 
@@ -161,18 +164,20 @@ function line(ctx, x0, y0, x1, y1) {
     ctx.stroke();
 }
 
-function plot(z, label, xOffset, yOffset, big) {
+function plot(z, label, offset, big) {
     var x = z.re * scale;
     var y = z.im * scale;
     ctx.beginPath();
     ctx.arc(x, y, big ? 10 : 3, 0, tau);
     ctx.fill();
     if (label) {
-        if (xOffset === undefined) xOffset = 7;
-        if (yOffset === undefined) yOffset = 5;
+        if (offset === undefined)
+            x += 7, y += 5;
+        else
+            x += offset.x, y += offset.y;
         ctx.save();
         ctx.scale(1, -1);
-        ctx.fillText(label, x - xOffset, -y - yOffset);
+        ctx.fillText(label, x, -y);
         ctx.restore();
     }
 }
@@ -196,9 +201,9 @@ function show() {
     clear();
     ctx.fillStyle = 'red';
     if (draggingState === 'pan')
-        plot(adding, null, 0, 0, true);
+        plot(adding, null, undefined, true);
     else if (draggingState === 'pinch')
-        plot(multiplying, null, 0, 0, true);
+        plot(multiplying, null, undefined, true);
     else if (draggingState === 'drag')
         scene.forEach(function(arrow) {
             if (arrow.by !== undefined) {
@@ -211,14 +216,14 @@ function show() {
             at = add(adding, at);
         else if (draggingState === 'pinch')
             at = mul(multiplying, at);
-        plot(at, null, 0, 0, true);
+        plot(at, null, undefined, true);
     });
     ctx.fillStyle = 'black';
     scene.forEach(plotArrow);
 }
 
 function plotArrow(arrow, i) {
-    plot(arrow.at, arrow.name, -16, -8);
+    plot(arrow.at, arrow.name);
 }
 
 function onClick(at) {
