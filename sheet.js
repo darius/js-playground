@@ -5,12 +5,14 @@ var width        = canvas.width;
 var height       = canvas.height;
 var ctx          = canvas.getContext('2d');
 
+// console.log('ok ' + ctx.save);
+
 var font = '12pt Georgia';
 
 var constLabelOffset = {x: -14, y: 8};
 var labelOffset = {x: 8, y: -18};
 
-var scale = height / 5;
+var scale = height / 8;
 
 var tau = 2*Math.PI;
 
@@ -65,7 +67,6 @@ function selecting(at) {
             && (result < 0 || d2 < distance2(at, scene[result].at)))
             result = i;
     });
-    console.log('selecting', result);
     return result;
 }
 
@@ -95,7 +96,6 @@ function clearSelection() {
 function clear() {
     var i, j;
     ctx.font = font;
-    ctx.resetTransform();
 
     ctx.clearRect(0, 0, width, height);
 
@@ -198,6 +198,7 @@ function atFrom(p) {
 }
 
 function show() {
+    ctx.save();
     clear();
     ctx.fillStyle = 'red';
     if (draggingState === 'pan')
@@ -220,6 +221,7 @@ function show() {
     });
     ctx.fillStyle = 'black';
     scene.forEach(plotArrow);
+    ctx.restore();
 }
 
 function plotArrow(arrow, i) {
@@ -243,20 +245,16 @@ function onMousedown(event) {
     var i = selecting(at);
     if (0 <= i) {
         if (scene[i].by === undefined) {
-            console.log('to drag');
             draggingState = 'drag';
             draggingWhich = i;
         }
     } else if (near(at, zero)) {
-        console.log('to pan');
         draggingState = 'pan';
         adding = zero;
     } else if (near(at, one)) {
-        console.log('to pan');
         draggingState = 'pinch';
         multiplying = one;
     } else {
-        console.log('to false');
         draggingState = false;
     }
     show();
@@ -298,7 +296,6 @@ function onMouseup(event) {
         ;
     }
     mouseStart = null;
-    console.log('to false');
     draggingState = false;
     show();
 }
