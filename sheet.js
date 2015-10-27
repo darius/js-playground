@@ -10,7 +10,7 @@ var font = '12pt Georgia';
 var constLabelOffset = {x: -14, y: 8};
 var labelOffset = {x: 8, y: -18};
 
-var scale = height / 8;
+var scale = width / 8;
 
 var tau = 2*Math.PI;
 
