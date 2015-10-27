@@ -92,8 +92,20 @@ function clearSelection() {
 function clear() {
     var i, j;
     ctx.font = font;
+    ctx.resetTransform();
 
     ctx.clearRect(0, 0, width, height);
+
+    ctx.translate(width/2, height/2);
+    ctx.scale(1, -1);
+
+    if (draggingState === 'pan') {
+        ctx.save();
+        ctx.translate(adding.re * scale, adding.im * scale);
+    } else if (draggingState === 'pinch') {
+        ctx.save();
+        ctx.transform(multiplying.re, multiplying.im, -multiplying.im, multiplying.re, 0, 0);
+    }
 
     ctx.strokeStyle = 'grey';
     for (i = 1; (i-1) * scale <= width/2; ++i) { // XXX hack
@@ -102,7 +114,7 @@ function clear() {
             gridLine(ctx, (i-1 + j/10) * scale, -height/2, (i-1 + j/10) * scale, height/2);
         }
         ctx.lineWidth = 1;
-        gridLine(ctx,  i * scale, -height/2,  i * scale, height/2);
+        gridLine(ctx, i * scale, -height/2, i * scale, height/2);
     }
     for (i = 1; (i-1) * scale <= height/2; ++i) { // XXX hack
         ctx.lineWidth = .5;
@@ -114,15 +126,19 @@ function clear() {
     }
 
     ctx.fillStyle = 'white';
-    ctx.fillRect(0, height/2-1, width, 3);
-    ctx.fillRect(width/2-1, 0, 3, height);
+    ctx.fillRect(-width/2, -1, width, 3);
+    ctx.fillRect(-1, -height/2, 3, height);
 
     ctx.lineWidth = 3;
     ctx.strokeStyle = 'white';
     ctx.beginPath();
-    ctx.arc(width/2, height/2, scale, 0, tau, true);
+    ctx.arc(0, 0, scale, 0, tau, true);
     ctx.closePath();
     ctx.stroke();
+
+    if (draggingState === 'pan' || draggingState === 'pinch') {
+        ctx.restore();
+    }
 
     ctx.lineWidth = 1;
     ctx.fillStyle = 'blue';
@@ -140,21 +156,24 @@ function gridLine(ctx, x0, y0, x1, y1) {
 
 function line(ctx, x0, y0, x1, y1) {
     ctx.beginPath();
-    ctx.moveTo(width/2 + x0 - .5, height/2 - y0 - .5); // - .5 for sharp grid lines
-    ctx.lineTo(width/2 + x1 - .5, height/2 - y1 - .5);
+    ctx.moveTo(x0 - .5, y0 - .5); // - .5 for sharp grid lines
+    ctx.lineTo(x1 - .5, y1 - .5);
     ctx.stroke();
 }
 
 function plot(z, label, xOffset, yOffset, big) {
-    var x = z.re * scale + width/2;
-    var y = height/2 - z.im * scale;
+    var x = z.re * scale;
+    var y = z.im * scale;
     ctx.beginPath();
     ctx.arc(x, y, big ? 10 : 3, 0, tau);
     ctx.fill();
     if (label) {
         if (xOffset === undefined) xOffset = 7;
         if (yOffset === undefined) yOffset = 5;
-        ctx.fillText(label, x + xOffset, y + yOffset);
+        ctx.save();
+        ctx.scale(1, -1);
+        ctx.fillText(label, x - xOffset, -y - yOffset);
+        ctx.restore();
     }
 }
 
