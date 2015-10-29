@@ -148,9 +148,6 @@ function clear() {
     ctx.fillStyle = 'blue';
     plot(zero, '0', constLabelOffset);
     plot(one,  '1', constLabelOffset);
-    ctx.font = 'italic ' + font;
-    plot({re: 0, im: 1}, 'i', constLabelOffset);
-    ctx.font = font;
 }
 
 function gridLine(ctx, x0, y0, x1, y1) {
