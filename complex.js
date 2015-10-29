@@ -39,3 +39,13 @@ function rmul(r, v) {
     return {re: r * v.re,
             im: r * v.im};
 }
+
+// An approximate square root of square.
+// Not necessarily the principal one. (How to get that?)
+function roughSqrt(square) {
+    var z = rmul(.5, add(one, square)); // (is this a silly first guess?)
+    for (var i = 10; 0 <= i; --i) {
+        z = rmul(.5, add(z, div(square, z)));
+    }
+    return z;
+}

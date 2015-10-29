@@ -238,12 +238,10 @@ function plotArrow(arrow, i) {
         case '':
             var p0 = scene[arrow.by.args[0]].at;
             var p1 = arrow.at;
-//            var d = Math.sqrt(mul(p0, p0) + mul(p1, p1));
-            var cpx = (p0.re + p1.re) * 1.4;
-            var cpy = (p0.im + p1.im) * 1.4;
+            var d = mul(p0, roughSqrt(scene[arrow.by.args[1]].at));
             ctx.beginPath();
             ctx.moveTo(scale*p0.re, scale*p0.im);
-            ctx.quadraticCurveTo(scale*cpx, scale*cpy, scale*p1.re, scale*p1.im); // XXX rough rough rough
+            ctx.quadraticCurveTo(1.1*scale*d.re, 1.1*scale*d.im, scale*p1.re, scale*p1.im); // XXX rough rough rough
             ctx.stroke();            
             break;
         }
