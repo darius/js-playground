@@ -196,16 +196,30 @@ function show() {
     ctx.save();
     clear();
     ctx.fillStyle = 'red';
-    if (draggingState === 'pan')
+    if (draggingState === 'pan') {
+        ctx.strokeStyle = 'magenta';
+        drawLine(0, 0, scale*adding.re, scale*adding.im);
         plot(adding, null, undefined, true);
-    else if (draggingState === 'pinch')
+        selection.forEach(function(i) {
+            var target = add(scene[i].at, adding);
+            drawLine(scale*scene[i].at.re, scale*scene[i].at.im,
+                     scale*target.re, scale*target.im);
+        });
+    } else if (draggingState === 'pinch') {
+        ctx.strokeStyle = 'green';
+        spiralArc(one, multiplying, multiplying);
         plot(multiplying, null, undefined, true);
-    else if (draggingState === 'drag')
+        selection.forEach(function(i) {
+            var target = mul(scene[i].at, multiplying);
+            spiralArc(scene[i].at, multiplying, target);
+        });
+    } else if (draggingState === 'drag') {
         scene.forEach(function(arrow) {
             if (arrow.by !== undefined) {
                 arrow.at = recompute(arrow.by);
             }
         });
+    }
     selection.forEach(function(i) {
         var at = scene[i].at;
         if (draggingState === 'pan')
