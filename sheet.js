@@ -27,10 +27,9 @@ var multiplying;           // When draggingState is 'pinch', a cnum for the curr
 var nextId = 0;
 
 function makeArrow(z, by) {
-    var arrow = {at: z,
-                 by: by,
-                 pinned: false,
-                 name: christen(by)};
+    var arrow = {at: z,               // cnum
+                 by: by,              // undefined or {op: string, arguments: [index_into_scene]}
+                 name: christen(by)}; // string
     scene.push(arrow);
 }
 
