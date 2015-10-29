@@ -215,22 +215,26 @@ function show() {
         plot(at, null, undefined, true);
     });
     ctx.fillStyle = 'black';
-    ctx.strokeStyle = 'green';
     scene.forEach(plotArrow);
     ctx.restore();
 }
 
 function plotArrow(arrow, i) {
     if (arrow.by === undefined) {
+        ctx.strokeStyle = 'magenta';
+        drawLine(0, 0, scale*arrow.at.re, scale*arrow.at.im);
+        ctx.strokeStyle = 'green';
         spiralArc(one, arrow.at, arrow.at);
     } else {
         switch (arrow.by.op) {
         case '+':
             var p0 = scene[arrow.by.args[0]].at;
             var p1 = arrow.at;
+            ctx.strokeStyle = 'magenta';
             drawLine(scale*p0.re, scale*p0.im, scale*p1.re, scale*p1.im);
             break;
         case '':
+            ctx.strokeStyle = 'green';
             spiralArc(scene[arrow.by.args[0]].at, scene[arrow.by.args[1]].at, arrow.at);
             break;
         }
