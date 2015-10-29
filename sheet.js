@@ -115,18 +115,18 @@ function clear() {
     for (i = 1; (i-1) * scale <= width/2; ++i) { // XXX hack
         ctx.globalAlpha = .25;
         for (j = 1; j <= 9; ++j) {
-            gridLine(ctx, (i-1 + j/10) * scale, -height/2, (i-1 + j/10) * scale, height/2);
+            gridLines((i-1 + j/10) * scale, -height/2, (i-1 + j/10) * scale, height/2);
         }
         ctx.globalAlpha = 1;
-        gridLine(ctx, i * scale, -height/2, i * scale, height/2);
+        gridLines(i * scale, -height/2, i * scale, height/2);
     }
     for (i = 1; (i-1) * scale <= height/2; ++i) { // XXX hack
         ctx.globalAlpha = .25;
         for (j = 1; j <= 9; ++j) {
-            gridLine(ctx, -width/2, (i-1 + j/10) * scale, width/2, (i-1 + j/10) * scale);
+            gridLines(-width/2, (i-1 + j/10) * scale, width/2, (i-1 + j/10) * scale);
         }
         ctx.globalAlpha = 1;
-        gridLine(ctx, -width/2, i * scale, width/2, i * scale);
+        gridLines(-width/2, i * scale, width/2, i * scale);
     }
 
     ctx.fillStyle = 'white';
@@ -150,16 +150,13 @@ function clear() {
     plot(one,  '1', constLabelOffset);
 }
 
-function gridLine(ctx, x0, y0, x1, y1) {
-    line(ctx, x0, y0, x1, y1);
-    line(ctx, -x0, -y0, -x1, -y1);
+function gridLines(x0, y0, x1, y1) {
+    gridLine(x0, y0, x1, y1);
+    gridLine(-x0, -y0, -x1, -y1);
 }
 
-function line(ctx, x0, y0, x1, y1) {
-    ctx.beginPath();
-    ctx.moveTo(x0 - .5, y0 - .5); // - .5 for sharp grid lines
-    ctx.lineTo(x1 - .5, y1 - .5);
-    ctx.stroke();
+function gridLine(x0, y0, x1, y1) {
+    drawLine(x0 - .5, y0 - .5, x1 - .5, y1 - .5); // - .5 for sharp grid lines
 }
 
 function plot(z, label, offset, big) {
@@ -231,7 +228,7 @@ function plotArrow(arrow, i) {
         case '+':
             var p0 = scene[arrow.by.args[0]].at;
             var p1 = arrow.at;
-            line_too(ctx, scale*p0.re, scale*p0.im, scale*p1.re, scale*p1.im);
+            drawLine(scale*p0.re, scale*p0.im, scale*p1.re, scale*p1.im);
             break;
         case '':
             spiralArc(scene[arrow.by.args[0]].at, scene[arrow.by.args[1]].at, arrow.at);
@@ -253,7 +250,7 @@ function spiralArc(u, v, uv) {
     ctx.stroke();            
 }
 
-function line_too(ctx, x0, y0, x1, y1) {
+function drawLine(x0, y0, x1, y1) {
     ctx.beginPath();
     ctx.moveTo(x0, y0);
     ctx.lineTo(x1, y1);
