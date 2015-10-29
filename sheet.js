@@ -224,7 +224,9 @@ function show() {
 }
 
 function plotArrow(arrow, i) {
-    if (arrow.by) {
+    if (arrow.by === undefined) {
+        spiralArc(one, arrow.at, arrow.at);
+    } else {
         switch (arrow.by.op) {
         case '+':
             var p0 = scene[arrow.by.args[0]].at;
@@ -232,17 +234,23 @@ function plotArrow(arrow, i) {
             line_too(ctx, scale*p0.re, scale*p0.im, scale*p1.re, scale*p1.im);
             break;
         case '':
-            var p0 = scene[arrow.by.args[0]].at;
-            var p1 = arrow.at;
-            var d = mul(p0, roughSqrt(scene[arrow.by.args[1]].at));
-            ctx.beginPath();
-            ctx.moveTo(scale*p0.re, scale*p0.im);
-            ctx.quadraticCurveTo(1.1*scale*d.re, 1.1*scale*d.im, scale*p1.re, scale*p1.im); // XXX rough rough rough
-            ctx.stroke();            
+            spiralArc(scene[arrow.by.args[0]].at, scene[arrow.by.args[1]].at, arrow.at);
             break;
         }
     }
     plot(arrow.at, arrow.name);
+}
+
+// Draw an arc from cnum u to uv.
+// Assuming uv = u*v, it should approximate a logarithmic spiral
+// similar to one from 1 to v, but we're going to be rough about that
+// for now.
+function spiralArc(u, v, uv) {
+    var d = mul(u, roughSqrt(v));
+    ctx.beginPath();
+    ctx.moveTo(scale*u.re, scale*u.im);
+    ctx.quadraticCurveTo(1.1*scale*d.re, 1.1*scale*d.im, scale*uv.re, scale*uv.im); // XXX rough rough rough    
+    ctx.stroke();            
 }
 
 function line_too(ctx, x0, y0, x1, y1) {
