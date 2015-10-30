@@ -363,7 +363,15 @@ function mouseCoords(event) {
             y: event.clientY - canvasBounds.top};
 }
 
-canvas.addEventListener('mousedown', mouseHandler(onMousedown));
+function leftButtonOnly(handler) {
+    return function(event) {
+        if (event.button === 0) { // left mouse button
+            handler(event);
+        }
+    };
+}
+
+canvas.addEventListener('mousedown', leftButtonOnly(mouseHandler(onMousedown)));
 canvas.addEventListener('mousemove', mouseHandler(onMousemove));
 canvas.addEventListener('mouseup',   mouseHandler(onMouseup));
 
