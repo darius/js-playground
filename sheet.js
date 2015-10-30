@@ -33,9 +33,15 @@ function makeArrow(z, by) {
 }
 
 function christen(by) {
-    if (by === undefined)
+    if (by === undefined) {
         return String.fromCharCode(97+nextId++);
-    else {
+    } else if (by.args[0] === by.args[1]) {
+        switch (by.op) {
+        case '+': return '2*' + parenthesize(scene[by.args[0]].name);
+        case '':  return parenthesize(scene[by.args[0]].name) + '^2';
+        default: throw new Error("can't happen");
+        }
+    } else {
         var L = parenthesize(scene[by.args[0]].name);
         var R = parenthesize(scene[by.args[1]].name);
         return L + by.op + R;
