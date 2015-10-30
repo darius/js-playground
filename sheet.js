@@ -330,21 +330,27 @@ function onMouseup(coords) {
     if (mouseStart.x === coords.x && mouseStart.y === coords.y) {
         onClick(atFrom(coords));
     } else if (draggingState === 'pan') {
+        var newSelection = [];
         var target = selecting(atFrom(coords));
         if (0 <= target) {
             selection.forEach(function(i) {
+                newSelection.push(scene.length);
                 makeArrow(add(scene[target].at, scene[i].at),
                           {op: '+', args: [i, target]});
             });
         }
+        selection = newSelection;
     } else if (draggingState === 'pinch') {
+        var newSelection = [];
         var target = selecting(atFrom(coords));
         if (0 <= target) {
             selection.forEach(function(i) {
+                newSelection.push(scene.length);
                 makeArrow(mul(scene[target].at, scene[i].at),
                           {op: '', args: [i, target]});
             });
         }
+        selection = newSelection;
     } else {
         ;
     }
