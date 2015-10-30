@@ -3,7 +3,6 @@
 var showName   = true;
 var showWhence = false;
 
-var canvasBounds = canvas.getBoundingClientRect();
 var width        = canvas.width;
 var height       = canvas.height;
 var ctx          = canvas.getContext('2d');
@@ -178,6 +177,7 @@ function plot(z, label, offset, big) {
 }
 
 function mouseCoords(event) {
+    var canvasBounds = canvas.getBoundingClientRect();
     return {x: event.clientX - canvasBounds.left,
             y: event.clientY - canvasBounds.top};
 }
