@@ -176,17 +176,6 @@ function plot(z, label, offset, big) {
     }
 }
 
-function mouseCoords(event) {
-    var canvasBounds = canvas.getBoundingClientRect();
-    return {x: event.clientX - canvasBounds.left,
-            y: event.clientY - canvasBounds.top};
-}
-
-function pointingAt(event) {
-    var p = mouseCoords(event);
-    return atFrom(p);
-}
-
 function atFrom(p) {
     return {re: (p.x - width/2) / scale,
             im: (height/2 - p.y) / scale};
@@ -304,8 +293,8 @@ function onClick(at) {
 
 var mouseStart = null;
 
-function onMousedown(event) {
-    mouseStart = mouseCoords(event);
+function onMousedown(coords) {
+    mouseStart = coords;
     var at = atFrom(mouseStart);
     var i = selecting(at);
     if (0 <= i) {
@@ -325,24 +314,23 @@ function onMousedown(event) {
     show();
 }
 
-function onMousemove(event) {
+function onMousemove(coords) {
     if (draggingState === 'drag') {
-        scene[draggingWhich].at = pointingAt(event);
+        scene[draggingWhich].at = atFrom(coords);
     } else if (draggingState === 'pan') {
-        adding = sub(pointingAt(event), atFrom(mouseStart));
+        adding = sub(atFrom(coords), atFrom(mouseStart));
     } else if (draggingState === 'pinch') {
-        multiplying = add(one, sub(pointingAt(event), atFrom(mouseStart)));
+        multiplying = add(one, sub(atFrom(coords), atFrom(mouseStart)));
     }
     show();
 }
 
 // XXX does mouseup ever have different coords from the last mousemove?
-function onMouseup(event) {
-    var mpos = mouseCoords(event);
-    if (mouseStart.x === mpos.x && mouseStart.y === mpos.y) {
-        onClick(pointingAt(event));
+function onMouseup(coords) {
+    if (mouseStart.x === coords.x && mouseStart.y === coords.y) {
+        onClick(atFrom(coords));
     } else if (draggingState === 'pan') {
-        var target = selecting(atFrom(mpos));
+        var target = selecting(atFrom(coords));
         if (0 <= target) {
             selection.forEach(function(i) {
                 makeArrow(add(scene[target].at, scene[i].at),
@@ -350,7 +338,7 @@ function onMouseup(event) {
             });
         }
     } else if (draggingState === 'pinch') {
-        var target = selecting(atFrom(mpos));
+        var target = selecting(atFrom(coords));
         if (0 <= target) {
             selection.forEach(function(i) {
                 makeArrow(mul(scene[target].at, scene[i].at),
@@ -365,36 +353,46 @@ function onMouseup(event) {
     show();
 }
 
-canvas.addEventListener('mousedown', onMousedown);
-canvas.addEventListener('mousemove', onMousemove);
-canvas.addEventListener('mouseup',   onMouseup);
+function mouseHandler(handler) {
+    return function(event) { handler(mouseCoords(event)); };
+}
+
+function mouseCoords(event) {
+    var canvasBounds = canvas.getBoundingClientRect();
+    return {x: event.clientX - canvasBounds.left,
+            y: event.clientY - canvasBounds.top};
+}
+
+canvas.addEventListener('mousedown', mouseHandler(onMousedown));
+canvas.addEventListener('mousemove', mouseHandler(onMousemove));
+canvas.addEventListener('mouseup',   mouseHandler(onMouseup));
+
+var mouseMoved = null;
 
 function onTouchstart(event) {
     event.preventDefault();     // to disable mouse events
     if (event.touches.length === 1) {
-        event.clientX = event.touches[0].pageX; // XXX make it look like a mouse event
-        event.clientY = event.touches[0].pageY;
-        mouseMoved = mouseCoords(event);
-        onMousedown(event);
+        var canvasBounds = canvas.getBoundingClientRect();
+        var coords = {x: event.touches[0].pageX - canvasBounds.left,
+                      y: event.touches[0].pageY - canvasBounds.top};
+        mouseMoved = coords;
+        onMousedown(coords);
     }
 }
 
-var mouseMoved = null;
-
 function onTouchmove(event) {
     if (event.touches.length === 1) {
-        event.clientX = event.touches[0].pageX; // XXX make it look like a mouse event
-        event.clientY = event.touches[0].pageY;
-        mouseMoved = mouseCoords(event);
-        onMousemove(event);
+        var canvasBounds = canvas.getBoundingClientRect();
+        var coords = {x: event.touches[0].pageX - canvasBounds.left,
+                      y: event.touches[0].pageY - canvasBounds.top};
+        mouseMoved = coords;
+        onMousemove(coords);
     }
 }
 
 function onTouchend(event) {
     if (event.touches.length === 0) {
-        event.clientX = mouseMoved.x + canvasBounds.left; // XXX make it look like a mouse event
-        event.clientY = mouseMoved.y + canvasBounds.top;
-        onMouseup(event);
+        onMouseup(mouseMoved);
     }
     mouseMoved = null;
 }
