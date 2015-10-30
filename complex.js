@@ -49,3 +49,14 @@ function roughSqrt(square) {
     }
     return z;
 }
+
+// An approximate cube root of cube.
+// Not necessarily the principal one. (How to get that?)
+function roughCubeRoot(cube) {
+    var z = roughSqrt(cube);
+    for (var i = 10; 0 <= i; --i) {
+        z = rmul(1/3, add(rmul(2, z),
+                          div(cube, mul(z, z))));
+    }
+    return z;
+}

@@ -261,10 +261,16 @@ function plotArrow(arrow, i) {
 // similar to one from 1 to v, but we're going to be rough about that
 // for now.
 function spiralArc(u, v, uv) {
-    var d = mul(u, roughSqrt(v));
+    var r = roughCubeRoot(v);
+    var d = mul(u, r);
+    var d2 = mul(d, r);
+    plot(d);                    // XXX just debugging viz
+    plot(d2);
     ctx.beginPath();
     ctx.moveTo(scale*u.re, scale*u.im);
-    ctx.quadraticCurveTo(1.1*scale*d.re, 1.1*scale*d.im, scale*uv.re, scale*uv.im); // XXX rough rough rough    
+    ctx.bezierCurveTo(scale*d.re, scale*d.im,
+                      scale*d2.re, scale*d2.im,
+                      scale*uv.re, scale*uv.im); // XXX rough rough rough    
     ctx.stroke();            
 }
 
