@@ -258,20 +258,32 @@ function plotArrow(arrow, i) {
 
 // Draw an arc from cnum u to uv.
 // Assuming uv = u*v, it should approximate a logarithmic spiral
-// similar to one from 1 to v, but we're going to be rough about that
-// for now.
+// similar to one from 1 to v.
 function spiralArc(u, v, uv) {
-    var r = roughCubeRoot(v);
-    var d = mul(u, r);
-    var d2 = mul(d, r);
-    plot(d);                    // XXX just debugging viz
-    plot(d2);
-    ctx.beginPath();
-    ctx.moveTo(scale*u.re, scale*u.im);
-    ctx.bezierCurveTo(scale*d.re, scale*d.im,
-                      scale*d2.re, scale*d2.im,
-                      scale*uv.re, scale*uv.im); // XXX rough rough rough    
-    ctx.stroke();            
+    // Multiples of v^(1/8) as points on the spiral from 1 to v.
+    var h4 = roughSqrt(v);
+    var h2 = roughSqrt(h4);
+    var h1 = roughSqrt(h2);
+    var h3 = mul(h2, h1);
+    var h5 = mul(h4, h1);
+    var h6 = mul(h4, h2);
+    var h7 = mul(h4, h3);
+
+    var zs = [u,
+              mul(u, h1),
+              mul(u, h2),
+              mul(u, h3),
+              mul(u, h4),
+              mul(u, h5),
+              mul(u, h6),
+              mul(u, h7),
+              uv];
+    var path = [];
+    zs.forEach(function(z) {
+        path.push(scale * z.re);
+        path.push(scale * z.im);
+    });
+    drawSpline(ctx, path, 0.4, false);  // drawSpline(..., t, closed);
 }
 
 function drawLine(x0, y0, x1, y1) {
