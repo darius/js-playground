@@ -416,16 +416,6 @@ function drawLine(x0, y0, x1, y1) {
     ctx.stroke();
 }
 
-function onClick(at) {
-    var i = selecting(at);
-    if (0 <= i) {
-        toggleSelection(i);
-    } else {
-        makeArrow(at);
-        onStateChange();
-    }
-}
-
 var mouseStart = null;
 
 function onMousedown(coords) {
@@ -489,6 +479,16 @@ function performOp(coords, op) {
             constructArrow({op: op, args: [sel, target]});
         });
         selection = newSelection;
+        onStateChange();
+    }
+}
+
+function onClick(at) {
+    var i = selecting(at);
+    if (0 <= i) {
+        toggleSelection(i);
+    } else {
+        makeArrow(at);
         onStateChange();
     }
 }
