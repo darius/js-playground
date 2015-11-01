@@ -25,6 +25,37 @@ var multiplying;           // When draggingState is 'pinch', a cnum for the curr
 
 var nextId = 0;
 
+function encodeState(url) {
+    var qmark = url.indexOf('?');
+    var base = qmark < 0 ? url : url.substring(0, qmark);
+    return base + "?state=" + encodeURIComponent(encodeScene());
+}
+
+function onStateChange() {
+    console.log('state', encodeState(document.URL));
+}
+
+function encodeScene() {
+    var s = '', sep = '';
+    for (var i = 0; i < scene.length; ++i) {
+        s += sep;
+        var arrow = scene[i];
+        // chars usable without encoding: letter digit -_.~
+        if (arrow.by === undefined) {
+            s += 'v' + arrow.at.re + '_' + arrow.at.im;
+        } else {
+            switch (arrow.by.op) {
+            case '+': s += 'p'; break;
+            case '':  s += 't'; break;
+            default: throw new Error("can't happen");
+            }
+            s += '' + arrow.by.args[0] + '_' + arrow.by.args[1];
+        }
+        sep = '-';
+    }
+    return s;
+}
+
 function makeArrow(z, by) {
     var arrow = {at: z,               // cnum
                  by: by,              // undefined or {op: string, arguments: [index_into_scene]}
@@ -294,6 +325,7 @@ function onClick(at) {
         toggleSelection(i);
     } else {
         makeArrow(at);
+        onStateChange();
     }
 }
 
@@ -346,6 +378,7 @@ function onMouseup(coords) {
             });
         }
         selection = newSelection;
+        onStateChange();
     } else if (draggingState === 'pinch') {
         var newSelection = [];
         var target = selecting(atFrom(coords));
@@ -357,6 +390,9 @@ function onMouseup(coords) {
             });
         }
         selection = newSelection;
+        onStateChange();
+    } else if (draggingState === 'drag') {
+        onStateChange();
     } else {
         ;
     }
