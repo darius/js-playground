@@ -140,7 +140,7 @@ function christen(by) {
         return String.fromCharCode(97+nextId());
     } else if (by.args[0] === by.args[1]) {
         switch (by.op) {
-        case '+': return '2*' + parenthesize(scene[by.args[0]].name);
+        case '+': return '2' + parenthesize(scene[by.args[0]].name);
         case '':  return parenthesize(scene[by.args[0]].name) + '^2';
         default: throw new Error("can't happen");
         }
