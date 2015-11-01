@@ -23,8 +23,6 @@ var draggingWhich;         // When draggingState is 'drag', an index into scene,
 var adding;                // When draggingState is 'pan', a cnum (complex number) for the current offset
 var multiplying;           // When draggingState is 'pinch', a cnum for the current factor
 
-var nextId = 0;
-
 function decodeParams(url) {
     var result = {};
     var qmark = url.indexOf('?');
@@ -47,6 +45,7 @@ function encodeState(url) {
 
 function onStateChange() {
     permalink.href = encodeState(document.URL);
+    undoButton.disabled = 0 === scene.length;
 }
 
 function encodeScene() {
@@ -108,6 +107,17 @@ function decodeSelection(s) {
     return s.split('~').map(function(s) { return parseInt(s); });
 }
 
+function undo() {
+    if (0 < scene.length) {
+        // TODO: remember the previous selection?
+        // TODO: undo moves, not just new points and constructions?
+        selection = selection.filter(function(i) { return i !== scene.length-1; });
+        scene.pop();
+        show();
+        onStateChange();
+    }
+}
+
 function makeArrow(z, by) {
     var arrow = {at: z,               // cnum
                  by: by,              // undefined or {op: string, arguments: [index_into_scene]}
@@ -127,7 +137,7 @@ function constructArrow(by) {
 
 function christen(by) {
     if (by === undefined) {
-        return String.fromCharCode(97+nextId++);
+        return String.fromCharCode(97+nextId());
     } else if (by.args[0] === by.args[1]) {
         switch (by.op) {
         case '+': return '2*' + parenthesize(scene[by.args[0]].name);
@@ -139,6 +149,12 @@ function christen(by) {
         var R = parenthesize(scene[by.args[1]].name);
         return L + by.op + R;
     }
+}
+
+function nextId() {
+    var id = 0;
+    scene.forEach(function(arrow) { if (arrow.by === undefined) ++id; });
+    return id;
 }
 
 function parenthesize(name) {
@@ -525,3 +541,8 @@ var params = decodeParams(document.URL);
 if (params.scene) decodeScene(params.scene);
 if (params.selection) selection = decodeSelection(params.selection);
 
+undoButton.onclick = function() {
+    undo();
+    return false;
+};
+undoButton.disabled = 0 === scene.length;

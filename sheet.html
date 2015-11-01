@@ -9,11 +9,13 @@
           style="background-color: #ddd"
           >
   </canvas>
+  <br><input id="undo" type="submit" value="Undo">
   <br><a id="permalink" href="">Permalink</a> to the current state of
   the diagram.
 
   <script type="text/javascript">
     var canvas = document.getElementById("canvas");
+    var undoButton = document.getElementById("undo");
     var permalink = document.getElementById("permalink");
   </script>
   <script type="text/javascript" src="spline_interpolate.js"></script>
