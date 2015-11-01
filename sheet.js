@@ -446,27 +446,27 @@ function onMouseup(coords) {
     if (mouseStart.x === coords.x && mouseStart.y === coords.y) {
         onClick(atFrom(coords));
     } else if (draggingState === 'pan') {
-        var newSelection = [];
         var target = selecting(atFrom(coords));
         if (0 <= target) {
+            var newSelection = [];
             selection.forEach(function(i) {
                 newSelection.push(scene.length);
                 constructArrow({op: '+', args: [i, target]});
             });
+            selection = newSelection;
+            onStateChange();
         }
-        selection = newSelection;
-        onStateChange();
     } else if (draggingState === 'pinch') {
-        var newSelection = [];
         var target = selecting(atFrom(coords));
         if (0 <= target) {
+            var newSelection = [];
             selection.forEach(function(i) {
                 newSelection.push(scene.length);
                 constructArrow({op: '', args: [i, target]});
             });
+            selection = newSelection;
+            onStateChange();
         }
-        selection = newSelection;
-        onStateChange();
     } else if (draggingState === 'drag') {
         onStateChange();
     } else {
