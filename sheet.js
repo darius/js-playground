@@ -46,8 +46,7 @@ function encodeState(url) {
 }
 
 function onStateChange() {
-    console.log('state', encodeState(document.URL));
-    location.replace(encodeState(document.URL));
+    permalink.href = encodeState(document.URL);
 }
 
 function encodeScene() {
@@ -74,16 +73,13 @@ function encodeScene() {
 function decodeScene(s) {
     var u, i = 0;
     while (i < s.length) {
-        console.log('top', i, s.length);
         var first;
         var sep = s.indexOf('~', i);
         if (sep < 0) {
             first = s.slice(i);
-            console.log('first1 ', first);
             i = s.length;
         } else {
             first = s.slice(i, sep);
-            console.log('first2 ', first, i, sep);
             i = sep + 1;
         }
         u = first.indexOf('_');
