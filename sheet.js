@@ -128,12 +128,13 @@ function makeArrow(z, by) {
 function constructArrow(by) {
     var arg0 = scene[by.args[0]].at;
     var arg1 = scene[by.args[1]].at;
-    switch (by.op) {
-    case '+': makeArrow(add(arg0, arg1), by); break;
-    case '':  makeArrow(mul(arg0, arg1), by); break;
-    default: throw new Error("can't happen");
-    }
+    makeArrow(opFunctions[by.op](arg0, arg1), by);
 }
+
+var opFunctions = {
+    '+': add,
+    '':  mul,
+};
 
 function christen(by) {
     if (by === undefined) {
