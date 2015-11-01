@@ -25,14 +25,29 @@ var multiplying;           // When draggingState is 'pinch', a cnum for the curr
 
 var nextId = 0;
 
+function decodeParams(url) {
+    var result = {};
+    var qmark = url.indexOf('?');
+    if (0 <= qmark) {
+        var pairs = url.substring(qmark+1, url.length).split('&');
+        for (var i = 0; i < pairs.length; ++i) {
+	    var kv = pairs[i].split('=', 2);
+	    result[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]);
+        }
+    }
+    return result;
+}
+
 function encodeState(url) {
     var qmark = url.indexOf('?');
     var base = qmark < 0 ? url : url.substring(0, qmark);
-    return base + "?state=" + encodeURIComponent(encodeScene());
+    return (base + '?scene=' + encodeURIComponent(encodeScene())
+            + '&selection=' + encodeURIComponent(encodeSelection()));
 }
 
 function onStateChange() {
     console.log('state', encodeState(document.URL));
+    location.replace(encodeState(document.URL));
 }
 
 function encodeScene() {
@@ -51,9 +66,50 @@ function encodeScene() {
             }
             s += '' + arrow.by.args[0] + '_' + arrow.by.args[1];
         }
-        sep = '-';
+        sep = '~';
     }
     return s;
+}
+
+function decodeScene(s) {
+    var u, i = 0;
+    while (i < s.length) {
+        console.log('top', i, s.length);
+        var first;
+        var sep = s.indexOf('~', i);
+        if (sep < 0) {
+            first = s.slice(i);
+            console.log('first1 ', first);
+            i = s.length;
+        } else {
+            first = s.slice(i, sep);
+            console.log('first2 ', first, i, sep);
+            i = sep + 1;
+        }
+        u = first.indexOf('_');
+        switch (first[0]) {
+        case 'v':
+            makeArrow({re: parseFloat(first.slice(1, u)),
+                       im: parseFloat(first.slice(u+1))});
+            break;
+        case 'p':
+        case 't':
+            constructArrow({op: first[0] === 'p' ? '+' : '',
+                            args: [parseInt(first.slice(1, u)),
+                                   parseInt(first.slice(u+1))]});
+            break;
+        default: 
+            throw new Error("Bad URL parameter " + first[0]);
+        }
+    }
+}
+
+function encodeSelection() {
+    return selection.join('~');
+}
+
+function decodeSelection(s) {
+    return s.split('~').map(function(s) { return parseInt(s); });
 }
 
 function makeArrow(z, by) {
@@ -61,6 +117,16 @@ function makeArrow(z, by) {
                  by: by,              // undefined or {op: string, arguments: [index_into_scene]}
                  name: christen(by)}; // string
     scene.push(arrow);
+}
+
+function constructArrow(by) {
+    var arg0 = scene[by.args[0]].at;
+    var arg1 = scene[by.args[1]].at;
+    switch (by.op) {
+    case '+': makeArrow(add(arg0, arg1), by); break;
+    case '':  makeArrow(mul(arg0, arg1), by); break;
+    default: throw new Error("can't happen");
+    }
 }
 
 function christen(by) {
@@ -373,8 +439,7 @@ function onMouseup(coords) {
         if (0 <= target) {
             selection.forEach(function(i) {
                 newSelection.push(scene.length);
-                makeArrow(add(scene[target].at, scene[i].at),
-                          {op: '+', args: [i, target]});
+                constructArrow({op: '+', args: [i, target]});
             });
         }
         selection = newSelection;
@@ -385,8 +450,7 @@ function onMouseup(coords) {
         if (0 <= target) {
             selection.forEach(function(i) {
                 newSelection.push(scene.length);
-                makeArrow(mul(scene[target].at, scene[i].at),
-                          {op: '', args: [i, target]});
+                constructArrow({op: '', args: [i, target]});
             });
         }
         selection = newSelection;
@@ -460,3 +524,8 @@ canvas.addEventListener('touchend',   onTouchend,   false);
 function onLoad() {
     show();
 }
+
+var params = decodeParams(document.URL);
+if (params.scene) decodeScene(params.scene);
+if (params.selection) selection = decodeSelection(params.selection);
+
