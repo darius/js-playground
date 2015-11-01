@@ -330,31 +330,50 @@ function show() {
         plot(at, null, undefined, true);
     });
     ctx.fillStyle = 'black';
-    scene.forEach(plotArrow);
+
+    // To reduce clutter, only show operation curves for 
+    // base-variable points when they're used in an operation.
+    // (I'm not sure this is more helpful than confusing.)
+    var opsUsed = {'+': [], '': []};
+    scene.forEach(function(arrow, i) {
+        if (arrow.by !== undefined) {
+            var used = opsUsed[arrow.by.op];
+            used[arrow.by.args[0]] = true;
+            used[arrow.by.args[1]] = true;
+        }
+    });
+    scene.forEach(plotArrow(opsUsed));
+
     ctx.restore();
 }
 
-function plotArrow(arrow, i) {
-    if (arrow.by === undefined) {
-        ctx.strokeStyle = 'magenta';
-        drawLine(0, 0, scale*arrow.at.re, scale*arrow.at.im);
-        ctx.strokeStyle = 'green';
-        spiralArc(one, arrow.at, arrow.at);
-    } else {
-        switch (arrow.by.op) {
-        case '+':
-            var p0 = scene[arrow.by.args[0]].at;
-            var p1 = arrow.at;
-            ctx.strokeStyle = 'magenta';
-            drawLine(scale*p0.re, scale*p0.im, scale*p1.re, scale*p1.im);
-            break;
-        case '':
-            ctx.strokeStyle = 'green';
-            spiralArc(scene[arrow.by.args[0]].at, scene[arrow.by.args[1]].at, arrow.at);
-            break;
+function plotArrow(opsUsed) {
+    return function(arrow, i) {
+        if (arrow.by === undefined) {
+            if (opsUsed['+'][i] !== undefined) {
+                ctx.strokeStyle = 'magenta';
+                drawLine(0, 0, scale*arrow.at.re, scale*arrow.at.im);
+            }
+            if (opsUsed[''][i] !== undefined) {
+                ctx.strokeStyle = 'green';
+                spiralArc(one, arrow.at, arrow.at);
+            }
+        } else {
+            switch (arrow.by.op) {
+            case '+':
+                var p0 = scene[arrow.by.args[0]].at;
+                var p1 = arrow.at;
+                ctx.strokeStyle = 'magenta';
+                drawLine(scale*p0.re, scale*p0.im, scale*p1.re, scale*p1.im);
+                break;
+            case '':
+                ctx.strokeStyle = 'green';
+                spiralArc(scene[arrow.by.args[0]].at, scene[arrow.by.args[1]].at, arrow.at);
+                break;
+            }
         }
+        plot(arrow.at, arrow.name);
     }
-    plot(arrow.at, arrow.name);
 }
 
 // Draw an arc from cnum u to uv.
@@ -430,12 +449,14 @@ function onMousedown(coords) {
 function onMousemove(coords) {
     if (draggingState === 'drag') {
         scene[draggingWhich].at = atFrom(coords);
+        show();
     } else if (draggingState === 'pan') {
         adding = sub(atFrom(coords), atFrom(mouseStart));
+        show();
     } else if (draggingState === 'pinch') {
         multiplying = add(one, sub(atFrom(coords), atFrom(mouseStart)));
+        show();
     }
-    show();
 }
 
 // XXX does mouseup ever have different coords from the last mousemove?
