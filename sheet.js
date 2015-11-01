@@ -347,15 +347,18 @@ function show() {
     ctx.restore();
 }
 
+var opColors = {'+': 'darkviolet',
+                '': 'green'};
+
 function plotArrow(opsUsed) {
     return function(arrow, i) {
         if (arrow.by === undefined) {
             if (opsUsed['+'][i] !== undefined) {
-                ctx.strokeStyle = 'magenta';
+                ctx.strokeStyle = opColors['+'];
                 drawLine(0, 0, scale*arrow.at.re, scale*arrow.at.im);
             }
             if (opsUsed[''][i] !== undefined) {
-                ctx.strokeStyle = 'green';
+                ctx.strokeStyle = opColors[''];
                 spiralArc(one, arrow.at, arrow.at);
             }
         } else {
@@ -363,11 +366,11 @@ function plotArrow(opsUsed) {
             case '+':
                 var p0 = scene[arrow.by.args[0]].at;
                 var p1 = arrow.at;
-                ctx.strokeStyle = 'magenta';
+                ctx.strokeStyle = opColors['+'];
                 drawLine(scale*p0.re, scale*p0.im, scale*p1.re, scale*p1.im);
                 break;
             case '':
-                ctx.strokeStyle = 'green';
+                ctx.strokeStyle = opColors[''];
                 spiralArc(scene[arrow.by.args[0]].at, scene[arrow.by.args[1]].at, arrow.at);
                 break;
             }
