@@ -165,11 +165,7 @@ function parenthesize(name) {
 function recompute(by) {
     var arg0 = scene[by.args[0]].at;
     var arg1 = scene[by.args[1]].at;
-    switch (by.op) {
-        case '+': return add(arg0, arg1);
-        case '':  return mul(arg0, arg1);
-        default: throw new Error("can't happen");
-    }
+    return opFunctions[by.op](arg0, arg1);
 }
 
 var selectingRadius = 0.2;
