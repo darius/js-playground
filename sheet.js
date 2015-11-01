@@ -168,15 +168,25 @@ function recompute(by) {
     return opFunctions[by.op](arg0, arg1);
 }
 
+function isDraggable(arrow) {
+    return arrow.by === undefined;
+}
+
+function always(value) {
+    return function() { return value; };
+}
+
 var selectingRadius = 0.2;
 
-function selecting(at) {
+function selecting(at, isAcceptable) {
     var result = -1;
     scene.forEach(function(arrow, i) {
-        var d2 = distance2(at, arrow.at);
-        if (d2 <= selectingRadius * selectingRadius
-            && (result < 0 || d2 < distance2(at, scene[result].at)))
-            result = i;
+        if (isAcceptable(arrow)) {
+            var d2 = distance2(at, arrow.at);
+            if (d2 <= selectingRadius * selectingRadius
+                && (result < 0 || d2 < distance2(at, scene[result].at)))
+                result = i;
+        }
     });
     return result;
 }
@@ -421,7 +431,7 @@ var mouseStart = null;
 function onMousedown(coords) {
     mouseStart = coords;
     var at = atFrom(mouseStart);
-    var i = selecting(at);
+    var i = selecting(at, isDraggable);
     if (0 <= i) {
         if (scene[i].by === undefined) {
             draggingState = 'drag';
@@ -471,7 +481,7 @@ function onMouseup(coords) {
 }
 
 function performOp(coords, op) {
-    var target = selecting(atFrom(coords));
+    var target = selecting(atFrom(coords), always(true));
     if (0 <= target) {
         var newSelection = [];
         selection.forEach(function(sel) {
@@ -484,7 +494,7 @@ function performOp(coords, op) {
 }
 
 function onClick(at) {
-    var i = selecting(at);
+    var i = selecting(at, always(true));
     if (0 <= i) {
         toggleSelection(i);
     } else {
