@@ -465,7 +465,7 @@ function performOp(coords, op) {
         var newSelection = [];
         selection.forEach(function(sel) {
             newSelection.push(scene.length);
-            constructArrow({op: '', args: [sel, target]});
+            constructArrow({op: op, args: [sel, target]});
         });
         selection = newSelection;
         onStateChange();
