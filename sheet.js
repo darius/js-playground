@@ -16,7 +16,12 @@ var scale = width / 8;
 
 var tau = 2*Math.PI;
 
-var scene = [];            // Array of arrows
+var constants = [//{at: zero, by: {op: 'constant', args: []}, name: '0'},
+                 {at: {re: 0, im: 1},  by: {op: 'constant', args: []}, name: 'i'},
+                 {at: sub(zero, one),  by: {op: 'constant', args: []}, name: '-1'}];
+constants = []; // XXX for now
+
+var scene = constants.slice(); // Array of arrows
 var selection = [];        // Array of indices into scene
 var draggingState = false; // false/'pan'/'pinch'/'drag' for nothing/adding/multiplying/moving
 var draggingWhich;         // When draggingState is 'drag', an index into scene, the arrow to drag around
@@ -45,7 +50,7 @@ function encodeState(url) {
 
 function onStateChange() {
     permalink.href = encodeState(document.URL);
-    undoButton.disabled = 0 === scene.length;
+    undoButton.disabled = constants.length === scene.length;
 }
 
 function encodeScene() {
@@ -54,15 +59,12 @@ function encodeScene() {
         s += sep;
         var arrow = scene[i];
         // chars usable without encoding: letter digit -_.~
-        if (arrow.by === undefined) {
-            s += 'v' + arrow.at.re + '_' + arrow.at.im;
-        } else {
-            switch (arrow.by.op) {
-            case '+': s += 'p'; break;
-            case '':  s += 't'; break;
-            default: throw new Error("can't happen");
-            }
-            s += '' + arrow.by.args[0] + '_' + arrow.by.args[1];
+        switch (arrow.by.op) {
+        case 'free':     s += 'v' + arrow.at.re + '_' + arrow.at.im; break;
+        case 'constant': s += 'c' + arrow.at.re + '_' + arrow.at.im; break;
+        case '+':        s += 'p' + arrow.by.args[0] + '_' + arrow.by.args[1]; break;
+        case '':         s += 't' + arrow.by.args[0] + '_' + arrow.by.args[1]; break;
+        default: throw new Error("can't happen");
         }
         sep = '~';
     }
@@ -70,6 +72,8 @@ function encodeScene() {
 }
 
 function decodeScene(s) {
+    // TODO: make sure decoded scene respects our invariants
+    //  (e.g. ops depend only on earlier arrows)
     var u, i = 0;
     while (i < s.length) {
         var first;
@@ -83,9 +87,15 @@ function decodeScene(s) {
         }
         u = first.indexOf('_');
         switch (first[0]) {
+        case 'c':
+            makeArrow({re: parseFloat(first.slice(1, u)),
+                       im: parseFloat(first.slice(u+1))},
+                      {op: 'constant', args: []});
+            break;
         case 'v':
             makeArrow({re: parseFloat(first.slice(1, u)),
-                       im: parseFloat(first.slice(u+1))});
+                       im: parseFloat(first.slice(u+1))},
+                      {op: 'free', args: []});
             break;
         case 'p':
         case 't':
@@ -108,7 +118,7 @@ function decodeSelection(s) {
 }
 
 function undo() {
-    if (0 < scene.length) {
+    if (constants.length < scene.length) {
         // TODO: remember the previous selection?
         // TODO: undo moves, not just new points and constructions?
         selection = selection.filter(function(i) { return i !== scene.length-1; });
@@ -137,7 +147,9 @@ var opFunctions = {
 };
 
 function christen(by) {
-    if (by === undefined) {
+    if (by.op === 'constant') {
+        return 'XXX';
+    } else if (by.op === 'free') {
         return String.fromCharCode(97+nextId());
     } else if (by.args[0] === by.args[1]) {
         switch (by.op) {
@@ -154,7 +166,7 @@ function christen(by) {
 
 function nextId() {
     var id = 0;
-    scene.forEach(function(arrow) { if (arrow.by === undefined) ++id; });
+    scene.forEach(function(arrow) { if (arrow.by.op === 'free') ++id; });
     return id;
 }
 
@@ -162,14 +174,24 @@ function parenthesize(name) {
     return name.length === 1 ? name : '(' + name + ')';
 }
 
-function recompute(by) {
-    var arg0 = scene[by.args[0]].at;
-    var arg1 = scene[by.args[1]].at;
-    return opFunctions[by.op](arg0, arg1);
+function recompute(arrow) {
+    var by = arrow.by;
+    switch (by.op) {
+    case 'constant':
+    case 'free':
+        break;
+    case '+':
+    case '':
+        var arg0 = scene[by.args[0]].at;
+        var arg1 = scene[by.args[1]].at;
+        arrow.at = opFunctions[by.op](arg0, arg1);
+        break;
+    default: throw new Error("can't happen");
+    }
 }
 
 function isDraggable(arrow) {
-    return arrow.by === undefined;
+    return arrow.by.op === 'free';
 }
 
 function always(value) {
@@ -325,11 +347,7 @@ function show() {
             spiralArc(scene[i].at, multiplying, target);
         });
     } else if (draggingState === 'drag') {
-        scene.forEach(function(arrow) {
-            if (arrow.by !== undefined) {
-                arrow.at = recompute(arrow.by);
-            }
-        });
+        scene.forEach(recompute);
     }
     selection.forEach(function(i) {
         var at = scene[i].at;
@@ -346,7 +364,7 @@ function show() {
     // (I'm not sure this is more helpful than confusing.)
     var opsUsed = {'+': [], '': []};
     scene.forEach(function(arrow, i) {
-        if (arrow.by !== undefined) {
+        if (arrow.by.op !== 'free' && arrow.by.op !== 'constant') {
             var used = opsUsed[arrow.by.op];
             used[arrow.by.args[0]] = true;
             used[arrow.by.args[1]] = true;
@@ -384,7 +402,7 @@ function plotArrow(opsUsed) {
             plot(arrow.at, arrow.name);
             return;
         }
-        if (arrow.by === undefined) {
+        if (arrow.by.op === 'free') {
             if (opsUsed['+'][i] !== undefined) {
                 ctx.strokeStyle = opColors['+'];
                 drawLine(0, 0, scale*arrow.at.re, scale*arrow.at.im);
@@ -455,7 +473,7 @@ function onMousedown(coords) {
     var at = atFrom(mouseStart);
     var i = selecting(at, isDraggable);
     if (0 <= i) {
-        if (scene[i].by === undefined) {
+        if (scene[i].by.op === 'free') {
             draggingState = 'drag';
             draggingWhich = i;
         }
@@ -520,7 +538,7 @@ function onClick(at) {
     if (0 <= i) {
         toggleSelection(i);
     } else {
-        makeArrow(at);
+        makeArrow(at, {op: 'free', args: []});
         onStateChange();
     }
 }
