@@ -571,12 +571,16 @@ canvas.addEventListener('mouseup',   mouseHandler(onMouseup));
 
 var mouseMoved = null;
 
+function touchCoords(touch) {
+    var canvasBounds = canvas.getBoundingClientRect();
+    return {x: event.touches[0].pageX - canvasBounds.left,
+            y: event.touches[0].pageY - canvasBounds.top};
+}
+
 function onTouchstart(event) {
     event.preventDefault();     // to disable mouse events
     if (event.touches.length === 1) {
-        var canvasBounds = canvas.getBoundingClientRect();
-        var coords = {x: event.touches[0].pageX - canvasBounds.left,
-                      y: event.touches[0].pageY - canvasBounds.top};
+        var coords = touchCoords(event.touches[0]);
         mouseMoved = coords;
         onMousedown(coords);
     }
@@ -584,9 +588,7 @@ function onTouchstart(event) {
 
 function onTouchmove(event) {
     if (event.touches.length === 1) {
-        var canvasBounds = canvas.getBoundingClientRect();
-        var coords = {x: event.touches[0].pageX - canvasBounds.left,
-                      y: event.touches[0].pageY - canvasBounds.top};
+        var coords = touchCoords(event.touches[0]);
         mouseMoved = coords;
         onMousemove(coords);
     }
