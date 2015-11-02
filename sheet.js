@@ -402,7 +402,11 @@ function plotArrow(opsUsed) {
             plot(arrow.at, arrow.name);
             return;
         }
-        if (arrow.by.op === 'free') {
+        switch (arrow.by.op) {
+        case 'constant':
+            // No special prep
+            break;
+        case 'free':
             if (opsUsed['+'][i] !== undefined) {
                 ctx.strokeStyle = opColors['+'];
                 drawLine(0, 0, scale*arrow.at.re, scale*arrow.at.im);
@@ -411,19 +415,19 @@ function plotArrow(opsUsed) {
                 ctx.strokeStyle = opColors[''];
                 spiralArc(one, arrow.at, arrow.at);
             }
-        } else {
-            switch (arrow.by.op) {
-            case '+':
-                var p0 = scene[arrow.by.args[0]].at;
-                var p1 = arrow.at;
-                ctx.strokeStyle = opColors['+'];
-                drawLine(scale*p0.re, scale*p0.im, scale*p1.re, scale*p1.im);
-                break;
-            case '':
-                ctx.strokeStyle = opColors[''];
-                spiralArc(scene[arrow.by.args[0]].at, scene[arrow.by.args[1]].at, arrow.at);
-                break;
-            }
+            break;
+        case '+':
+            var p0 = scene[arrow.by.args[0]].at;
+            var p1 = arrow.at;
+            ctx.strokeStyle = opColors['+'];
+            drawLine(scale*p0.re, scale*p0.im, scale*p1.re, scale*p1.im);
+            break;
+        case '':
+            ctx.strokeStyle = opColors[''];
+            spiralArc(scene[arrow.by.args[0]].at, scene[arrow.by.args[1]].at, arrow.at);
+            break;
+        default:
+            throw new Error("can't happen");
         }
         plot(arrow.at, arrow.name);
     }
