@@ -354,8 +354,26 @@ function show() {
     });
     scene.forEach(plotArrow(opsUsed));
 
+    ctx.strokeStyle = 'black';
+    if (showlinesCheckbox.checked) {
+        figureLines.forEach(function(line) {
+            if (line[0] < scene.length && line[1] < scene.length) {
+                drawLine(scale * scene[line[0]].at.re,
+                         scale * scene[line[0]].at.im,
+                         scale * scene[line[1]].at.re,
+                         scale * scene[line[1]].at.im);
+            }
+        });
+    }
+
     ctx.restore();
 }
+
+// assume:
+// a b a+b c ac bc (a+b)c
+// 0 1 2   3 4  5  6
+
+var figureLines = [[1,2], [0,4], [1,5], [5,6]];
 
 var opColors = {'+': 'darkviolet',
                 '': 'green'};
