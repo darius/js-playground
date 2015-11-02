@@ -10,12 +10,16 @@
           >
   </canvas>
   <br><input id="undo" type="submit" value="Undo">
+  <br><label><input id="showarith" type="checkbox" checked>Show arithmetic</label>
+  <br><label><input id="showlines" type="checkbox"        >Show lines</label>
   <br><a id="permalink" href="">Permalink</a> to the current state of
   the diagram.
 
   <script type="text/javascript">
     var canvas = document.getElementById("canvas");
     var undoButton = document.getElementById("undo");
+    var showarithCheckbox = document.getElementById("showarith");
+    var showlinesCheckbox = document.getElementById("showlines");
     var permalink = document.getElementById("permalink");
   </script>
   <script type="text/javascript" src="spline_interpolate.js"></script>
@@ -28,10 +32,9 @@
   around. (But you can't select/drag the constants 0 or 1.)
 
   <p>To add: select a point <i>a</i>, then drag from 0 to a point <i>b</i>. The sum
-  <i>a+b</i> appears. (On a touchscreen, you'd do this by panning instead.)
+  <i>a+b</i> appears.
 
   <p>To multiply: select a point <i>a</i>, then drag from 1 to a
-  point <i>b</i>. The product <i>ab</i> appears. (On a touchscreen,
-  you'd do this by pinching instead.)
+  point <i>b</i>. The product <i>ab</i> appears.
 
 </body>

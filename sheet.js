@@ -362,6 +362,10 @@ var opColors = {'+': 'darkviolet',
 
 function plotArrow(opsUsed) {
     return function(arrow, i) {
+        if (!showarithCheckbox.checked) {
+            plot(arrow.at, arrow.name);
+            return;
+        }
         if (arrow.by === undefined) {
             if (opsUsed['+'][i] !== undefined) {
                 ctx.strokeStyle = opColors['+'];
