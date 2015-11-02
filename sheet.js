@@ -594,3 +594,6 @@ undoButton.onclick = function() {
     return false;
 };
 undoButton.disabled = 0 === scene.length;
+
+showarithCheckbox.addEventListener('click', show, false);
+showlinesCheckbox.addEventListener('click', show, false);
