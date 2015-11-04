@@ -2,6 +2,7 @@
 
 // A fanciful sketch of how sheet.js ought to go.
 
+var maxClickDistance = 2;
 var minSelectionDistance = 20;
 
 function onLoad() {
@@ -74,7 +75,6 @@ function makeQuiver() {
     return quiver;
 }
 
-var minSelectionDistance2 = Math.pow(minSelectionDistance, 2);
 var tau = 2*Math.PI;
 
 // A sheet UI presents a quiver on a canvas, along with state
@@ -94,6 +94,12 @@ function makeSheetUI(quiver, canvas, options, controls) {
     var bottom = -height/2;
     var top    =  height/2;
     var scale  = width / options.xScale;
+
+    function pointFromXY(xy) {
+        return {re: xy.x / scale, im: xy.y / scale};
+    }
+    var minSelectionDistance2 = Math.pow(minSelectionDistance / scale, 2);
+    var maxClickDistance2     = Math.pow(maxClickDistance / scale, 2);
 
     ctx.font = font;
     ctx.translate(right, top);
@@ -161,44 +167,38 @@ function makeSheetUI(quiver, canvas, options, controls) {
         controls.undo.disabled = quiver.isEmpty();
     }
 
-    function startPointingAt(xy) { // xy is in canvas coords
-        var choice = pickPointedTo(xy, quiver.getFreeArrows());
-        if (choice !== null) {
-            return makeFreeDragger(xy, choice);
-        }
-        if (options.adding && isCandidatePick(xy, zeroArrow)) { // TODO: make a list of constants, probably
-            return makeAddDragger(xy);
-        }
-        if (options.multiplying && isCandidatePick(xy, oneArrow)) {
-            return makeMultiplyDragger(xy);
-        }
-        return makeNonDragger(xy);
+    function isCandidatePick(at, arrow) {
+        return distance2(at, arrow.at) <= minSelectionDistance2;
     }
 
-    function isCandidatePick(xy, arrow) {
-        return xyDistance2(xy, arrow.xy) <= minSelectionDistance2;
-    }
-
+    // TODO: make a list of constants, probably
     var zeroArrow = XXX;
     var oneArrow = XXX;
 
-    function makeNonDragger(startXY) {
+    var emptyHand = {
+        moveFromStart: noOp,
+        onMove: noOp,
+        onStop: noOp,
+        dragGrid: noOp,
+        show: noOp,
+    };
+
+    function makeNonHand(startAt) {
         var strayed = false;
-        function moveTo(xy) {
-            if (startXY.x !== xy.x || startXY.y !== xy.y) {
-                strayed = true; // XXX make it less sensitive
+        function moveFromStart(offset) {
+            strayed = strayed || maxClickDistance2 < distance2(zero, offset);
+        }
+        function onStop() {
+            if (!strayed) {
+                onClick(at);
             }
         }
         return {
-            moveTo: moveTo,
-            stopAt: function(xy) {
-                moveTo(xy);
-                if (!strayed) {
-                    onClick(xy);
-                }
-            },
-            dragGrid: function() { },
-            show: function() { }
+            moveFromStart: moveFromStart,
+            onMove: noOp,
+            onStop: onStop,     // TODO: add to the undo stack
+            dragGrid: noOp,
+            show: noOp
        };
     }
 
@@ -220,33 +220,35 @@ function makeSheetUI(quiver, canvas, options, controls) {
         // XXX
     }
 
-    function makeFreeDragger(startXY, arrow) {
-        var startAt = arrow.at();
-        function moveTo(xy) {
-            arrow.moveTo(add(startAt, pointFromXY(xy.x - startXY.x,
-                                                  xy.y - startXY.y)));
+    function makeMoverHand(startPoint, arrow) {
+        var startAt = arrow.at;
+        function moveFromStart(offset) {
+            arrow.moveTo(add(startAt, offset));
+        }
+        function onMove() {
             quiver.onMove();
         }
         return {
-            moveTo: moveTo,
-            stopAt: moveTo,     // TODO: add to the undo stack
-            dragGrid: function() { },
-            show: function() { }
+            moveFromStart: moveFromStart,
+            onMove: onMove,
+            onStop: onMove,     // TODO: add to the undo stack
+            dragGrid: noOp,
+            show: noOp,
         };
     }
 
-    function makeAddDragger(startXY) {
+    function makeAddHand(startPoint) {
         var adding = zero;
-        function moveTo(xy) {
-            adding = pointFromXY(xy.x - startXY.x,
-                                 xy.y - startXY.y);
+        function moveFromStart(offset) {
+            adding = offset;
+        }
+        function onStop() {
+            // XXX
         }
         return {
-            moveTo: moveTo,
-            stopAt: function(xy) {
-                moveTo(xy);
-                // XXX
-            },
+            moveFromStart: moveFromStart,
+            onMove: noOp,
+            onStop: onStop,
             dragGrid: function() {
                 ctx.translate(adding.re * scale, adding.im * scale);
             },
@@ -257,17 +259,18 @@ function makeSheetUI(quiver, canvas, options, controls) {
         };
     }
 
-    function makeMultiplyDragger(startXY) {
+    function makeMultiplyHand(startPoint) {
         var multiplying = one;
-        function moveTo(xy) {
+        function moveFromStart(offset) {
+            multiplying = add(one, offset);
+        }
+        function onStop() {
             // XXX
         }
         return {
-            moveTo: moveTo,
-            stopAt: function(xy) {
-                moveTo(xy);
-                // XXX
-            },
+            moveFromStart: moveFromStart,
+            onMove: noOp,
+            onStop: onStop,
             dragGrid: function() {
                 ctx.transform(multiplying.re, multiplying.im, -multiplying.im, multiplying.re, 0, 0);
             },
@@ -285,21 +288,37 @@ function makeSheetUI(quiver, canvas, options, controls) {
         return 0 < candidates.length ? pickClosestTo(xy, candidates) : null;
     }
 
-    var hand = null;
+    function chooseHand(at) {
+        var choice = pickPointedTo(at, quiver.getFreeArrows());
+        if (choice !== null) {
+            return makeMoverHand(at, choice);
+        } else if (options.adding && isCandidatePick(at, zeroArrow)) {
+            return makeAddHand(at);
+        } else if (options.multiplying && isCandidatePick(at, oneArrow)) {
+            return makeMultiplyHand(at);
+        } else {
+            return makeNonHand(at);
+        }
+    }
+
+    var hand = emptyHand;
+    var handStartedAt;
 
     var pointerListener = {
         onStart: function(xy) {
-            hand = startPointingAt(xy);
+            handStartedAt = pointFromXY(xy);
+            hand = chooseHand(handStartedAt);
             show();
-            // XXX also return false?
         },
         onMove: function(xy) {
-            hand.moveTo(xy);
+            hand.moveFromStart(sub(pointFromXy(xy), handStartedAt));
+            hand.onMove();
             show();
         },
         onEnd: function(xy) {
-            hand.stopAt(xy);
-            hand = null;
+            hand.moveFromStart(sub(pointFromXy(xy), handStartedAt));
+            hand.onStop();
+            hand = emptyHand;
             show();
         },
     };
@@ -368,6 +387,8 @@ function addPointerListener(canvas, listener) {
 
 
 // Helpers
+
+function noOp() { }
 
 // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
 function override(obj1, obj2) {

@@ -7,6 +7,10 @@ function squaredMagnitude(v) {
     return v.re*v.re + v.im*v.im;
 }
 
+function distance2(u, v) {
+    return squaredMagnitude(sub(u, v));
+}
+
 function add(u, v) {
     return {re: u.re + v.re,
             im: u.im + v.im};
