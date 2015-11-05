@@ -247,7 +247,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
     var emptyHand = {
         moveFromStart: noOp,
         onMove: noOp,
-        onStop: noOp,
+        onEnd: noOp,
         dragGrid: noOp,
         show: noOp,
     };
@@ -257,7 +257,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
         function moveFromStart(offset) {
             strayed = strayed || maxClickDistance2 < distance2(zero, offset);
         }
-        function onStop() {
+        function onEnd() {
             if (!strayed) {
                 onClick(at);
             }
@@ -265,7 +265,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
         return {
             moveFromStart: moveFromStart,
             onMove: noOp,
-            onStop: onStop,     // TODO: add to the undo stack
+            onEnd: onEnd,     // TODO: add to the undo stack
             dragGrid: noOp,
             show: noOp
        };
@@ -301,7 +301,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
         return {
             moveFromStart: moveFromStart,
             onMove: onMove,
-            onStop: onMove,     // TODO: add to the undo stack
+            onEnd: onMove,     // TODO: add to the undo stack
             dragGrid: noOp,
             show: noOp,
         };
@@ -312,13 +312,13 @@ function makeSheetUI(quiver, canvas, options, controls) {
         function moveFromStart(offset) {
             adding = offset;
         }
-        function onStop() {
+        function onEnd() {
             perform(addOp, adding);
         }
         return {
             moveFromStart: moveFromStart,
             onMove: noOp,
-            onStop: onStop,
+            onEnd: onEnd,
             dragGrid: function() {
                 ctx.translate(adding.re * scale, adding.im * scale);
             },
@@ -334,13 +334,13 @@ function makeSheetUI(quiver, canvas, options, controls) {
         function moveFromStart(offset) {
             multiplying = add(one, offset);
         }
-        function onStop() {
+        function onEnd() {
             perform(mulOp, multiplying);
         }
         return {
             moveFromStart: moveFromStart,
             onMove: noOp,
-            onStop: onStop,
+            onEnd: onEnd,
             dragGrid: function() {
                 ctx.transform(multiplying.re, multiplying.im, -multiplying.im, multiplying.re, 0, 0);
             },
@@ -397,7 +397,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
         },
         onEnd: function(xy) {
             hand.moveFromStart(sub(pointFromXy(xy), handStartedAt));
-            hand.onStop();
+            hand.onEnd();
             hand = emptyHand;
             show();
         },
