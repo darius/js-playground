@@ -141,28 +141,9 @@ function makeSheetUI(quiver, canvas, options, controls) {
         ctx.restore();
     }
 
-    // Draw an arc from cnum u to uv.
-    // Assuming uv = u*v, it should approximate a logarithmic spiral
-    // similar to one from 1 to v.
+    // Draw an arc from cnum u to uv (which should be u*v).
     function drawSpiralArc(u, v, uv) {
-        // Multiples of v^(1/8) as points on the spiral from 1 to v.
-        var h4 = roughSqrt(v);
-        var h2 = roughSqrt(h4);
-        var h1 = roughSqrt(h2);
-        var h3 = mul(h2, h1);
-        var h5 = mul(h4, h1);
-        var h6 = mul(h4, h2);
-        var h7 = mul(h4, h3);
-
-        var zs = [u,
-                  mul(u, h1),
-                  mul(u, h2),
-                  mul(u, h3),
-                  mul(u, h4),
-                  mul(u, h5),
-                  mul(u, h6),
-                  mul(u, h7),
-                  uv];
+        var zs = computeSpiralArc(u, v, uv);
         var path = [];
         zs.forEach(function(z) {
             path.push(scale * z.re);
@@ -545,4 +526,29 @@ function assert(claim) {
 
 function makeURL(url, params) {
     // XXX
+}
+
+
+// Return a sequence of points along an arc from cnum u to uv.
+// Assuming uv = u*v, it should approximate a logarithmic spiral
+// similar to one from 1 to v.
+function computeSpiralArc(u, v, uv) {
+    // Multiples of v^(1/8) as points on the spiral from 1 to v.
+    var h4 = roughSqrt(v);
+    var h2 = roughSqrt(h4);
+    var h1 = roughSqrt(h2);
+    var h3 = mul(h2, h1);
+    var h5 = mul(h4, h1);
+    var h6 = mul(h4, h2);
+    var h7 = mul(h4, h3);
+
+    return [u,
+            mul(u, h1),
+            mul(u, h2),
+            mul(u, h3),
+            mul(u, h4),
+            mul(u, h5),
+            mul(u, h6),
+            mul(u, h7),
+            uv];
 }
