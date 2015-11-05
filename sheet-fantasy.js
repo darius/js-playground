@@ -137,7 +137,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
         var x = at.re * scale + offset.x;
         var y = at.im * scale + offset.y;
         ctx.save();
-        ctx.scale(1, -1);
+        ctx.scale(1, -1); // Back into left-handed coordinates so the text isn't flipped
         ctx.fillText(text, x, -y);
         ctx.restore();
     }
@@ -150,7 +150,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
             path.push(scale * z.re);
             path.push(scale * z.im);
         });
-        drawSpline(ctx, path, 0.4, false);  // drawSpline(..., t, closed);
+        drawSpline(ctx, path, 0.4, false);
     }
 
     var selection = [];
