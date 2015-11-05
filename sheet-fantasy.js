@@ -35,6 +35,10 @@ function makeQuiver() {
         // XXX
     }
 
+    function constructArrow(op, argument, target) {
+        return XXX;
+    }
+
     function serialize() {
         // XXX
         return '';
@@ -72,6 +76,7 @@ function makeQuiver() {
     var quiver = {
         add: add,
         addFreeArrow: addFreeArrow,
+        constructArrow: constructArrow,
         deserialize: deserialize, serialize: serialize,
         isEmpty: isEmpty,
         getArrows: getArrows,
@@ -221,6 +226,16 @@ function makeSheetUI(quiver, canvas, options, controls) {
         controls.undo.disabled = quiver.isEmpty();
     }
 
+    function onStateChange() {
+        if (controls.permalink) {
+            controls.permalink.href = encodeState(document.URL); // XXX
+        }
+        if (controls.undo) {
+            controls.undo.disabled = XXX;
+        }
+    }
+
+
     function isCandidatePick(at, arrow) {
         return distance2(at, arrow.at) <= minSelectionDistance2;
     }
@@ -257,7 +272,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
     }
 
     function onClick(at) {
-        var choice = pickPointedTo(at, quiver.getArrows());
+        var choice = pickTarget(at, quiver.getArrows());
         if (choice !== null) {
             toggleSelection(choice);
         } else {
@@ -337,11 +352,16 @@ function makeSheetUI(quiver, canvas, options, controls) {
     }
 
     function perform(op, at) {
-        var target = select(at, always(true));
-        // xXXX
+        var target = pickTarget(at, quiver.getArrows()); // TODO: also the constants
+        if (target !== null) {
+            selection = selection.map(function(argument) {
+                return quiver.constructArrow(op, argument, target);
+            });
+            onStateChange();
+        }
     }
 
-    function pickPointedTo(at, arrows) {
+    function pickTarget(at, arrows) {
         var candidates = arrows.filter(function(arrow) {
             return isCandidatePick(at, arrow);
         });
@@ -349,9 +369,9 @@ function makeSheetUI(quiver, canvas, options, controls) {
     }
 
     function chooseHand(at) {
-        var choice = pickPointedTo(at, quiver.getFreeArrows());
-        if (choice !== null) {
-            return makeMoverHand(at, choice);
+        var target = pickTarget(at, quiver.getFreeArrows());
+        if (target !== null) {
+            return makeMoverHand(at, target);
         } else if (options.adding && isCandidatePick(at, zeroArrow)) {
             return makeAddHand(at);
         } else if (options.multiplying && isCandidatePick(at, oneArrow)) {
