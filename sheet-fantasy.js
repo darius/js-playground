@@ -31,6 +31,10 @@ function makeQuiver() {
         // XXX
     }
 
+    function makeConstantArrow(value, label) {
+        // XXX
+    }
+
     function addFreeArrow(at) {
         // XXX
     }
@@ -82,6 +86,7 @@ function makeQuiver() {
         getArrows: getArrows,
         getFreeArrows: getFreeArrows,
         getLines: getLines,
+        makeConstantArrow: makeConstantArrow,
         onMove: onMove,
     };
     return quiver;
@@ -228,7 +233,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
 
     function onStateChange() {
         if (controls.permalink) {
-            controls.permalink.href = encodeState(document.URL); // XXX
+            controls.permalink.href = makeURL(controls.permalink, serialize());
         }
         if (controls.undo) {
             controls.undo.disabled = XXX;
@@ -241,8 +246,8 @@ function makeSheetUI(quiver, canvas, options, controls) {
     }
 
     // TODO: make a list of constants, probably
-    var zeroArrow = XXX;
-    var oneArrow = XXX;
+    var zeroArrow = quiver.makeConstantArrow(zero, '0');
+    var oneArrow  = quiver.makeConstantArrow(one,  '1');
 
     var emptyHand = {
         moveFromStart: noOp,
@@ -536,4 +541,8 @@ function assert(claim) {
     if (!claim) {
         throw new Error("Liar");
     }
+}
+
+function makeURL(url, params) {
+    // XXX
 }
