@@ -132,6 +132,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
         ctx.fill();
     }
 
+    // N.B. textOffset is in canvas (xy) coordinates.
     function drawText(at, text, textOffset) {
         var x = at.re * scale + offset.x;
         var y = at.im * scale + offset.y;
