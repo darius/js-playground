@@ -1,0 +1,138 @@
+<head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <meta http-equiv="encoding" content="utf-8">
+</head>
+<table>
+<tr>
+<td><canvas id="canvas" width="512" height="512" style="border:1px solid">
+CA canvas
+</canvas>
+<p><span id="framerate">0</span> frames/second
+<td><form>
+  <input type="button" value="Run" onclick="run()">
+  <br>
+  <textarea id="codearea" cols="80" rows="45">
+// Cell-value to color mapping
+setColors(['black', 'cyan', 0x004000, 'magenta']);
+
+// Cell-update rule
+if (false) {
+    function tmgas(center, cw, ccw, opp, phase) {
+        switch (phase) {
+        case 0:
+            return makeMargolusBlock(ccw, center, opp, cw);
+        case 1:
+            return makeMargolusBlock(cw, opp, ccw, center);
+        }
+    }
+    setMargolusRule(tmgas);
+    return;
+}
+
+function life(nw, n, ne,
+              w, center, e,
+              sw, s, se,
+              center1) {
+    var sum = nw+n+ne + w+e + sw+s+se;
+    var newcenter = sum === 3 || (center && sum === 2) ? 1 : 0;
+    var newcenter1 = center1 | center;
+    return 2 * newcenter1 + newcenter;
+}
+setMooreRule(life);
+
+// Grid contents
+// randomGrid(0.05); return;
+
+// R pentomino
+clearGrid();
+setGridFromPic(width/2, height/2,
+" **\
+.** \
+. *");
+
+start(0);
+</textarea>
+</form>
+</table>
+
+(Control-Y: shortcut for the Run button.)
+
+
+<script type="text/javascript">
+var canvas = document.getElementById("canvas");
+</script>
+
+<script type="text/javascript" src="ca.js"></script>
+
+<script type="text/javascript">
+
+function drawNextFrame() {
+    reallyDrawNextFrame();
+    document.getElementById("framerate").innerHTML =
+        Math.round(computeFrameRate());
+}
+
+function run() {
+    var body = document.getElementById("codearea").value;
+    var code = "(function() {\n" + body + "\n})()";
+    try { eval(code); }
+    catch (error) { alert(error); }
+}
+
+document.onkeypress = function(e) {
+    // Intercept ctrl-Y; when you see it, call run().
+    if (e.ctrlKey && (e.charCode === 121 || e.charCode === 25)) {
+        run();
+        return false;
+    }
+    return true;
+}
+
+
+// We take the framerate to be the average #frames/sec over the last
+// 10 frames. (Or over all frames, if fewer than 10.)
+// frameTimes holds the time of each, at position (frame# modulo 10).
+
+var nframes = 0;
+
+var startTime = (new Date()).getTime(); // in msec
+var frameTimes =  [startTime, startTime, startTime, startTime, startTime,
+                   startTime, startTime, startTime, startTime, startTime];
+
+function computeFrameRate() {
+    ++nframes;
+    var now = (new Date()).getTime();
+    var f = nframes % frameTimes.length;
+    var then = frameTimes[f]; frameTimes[f] = now;
+    var frameInterval = Math.min(nframes, frameTimes.length);
+    return frameInterval / (0.001 * (now - then));
+}
+
+
+// Per-frame action
+
+function reallyDrawNextFrame() {
+    updateGrid();
+    blitCanvas();
+}
+
+var frameIntervalId;
+
+function start(msecPerFrame) {
+    stop();
+    blitCanvas();
+    frameIntervalId = setInterval(drawNextFrame, msecPerFrame);
+}
+
+function step() {
+    stop();
+    drawNextFrame();
+}
+
+function stop() {
+    if (frameIntervalId) clearInterval(frameIntervalId);
+    frameIntervalId = 0;
+}
+
+
+</script>
