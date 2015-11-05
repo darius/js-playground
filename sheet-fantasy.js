@@ -455,14 +455,40 @@ function showGrid(ctx, width, height, left, bottom, right, top, scale) {
 }
 
 function addPointerListener(canvas, listener) {
-    // XXX
+
+    var prevTouch = null;
+
+    function onTouchstart(event) {
+        event.preventDefault();     // to disable mouse events
+        if (event.touches.length === 1) {
+            prevTouch = touchCoords(event.touches[0]);
+            listener.onStart(prevTouch);
+        }
+    }
+
+    function onTouchmove(event) {
+        if (event.touches.length === 1) {
+            prevTouch = touchCoords(event.touches[0]);
+            listener.onMove(prevTouch);
+        }
+    }
+
+    function onTouchend(event) {
+        if (event.touches.length === 0) {
+            listener.onEnd(prevTouch);
+        } else {
+            onTouchmove(event);
+        }
+        prevTouch = null;
+    }
+
     canvas.addEventListener('touchstart', onTouchstart);
     canvas.addEventListener('touchmove',  onTouchmove);
     canvas.addEventListener('touchend',   onTouchend);
 
-    canvas.addEventListener('mousedown', leftButtonOnly(mouseHandler(onMousedown)));
-    canvas.addEventListener('mousemove', mouseHandler(onMousemove));
-    canvas.addEventListener('mouseup',   mouseHandler(onMouseup));
+    canvas.addEventListener('mousedown', leftButtonOnly(mouseHandler(canvas, listener.onStart)));
+    canvas.addEventListener('mousemove', mouseHandler(canvas, listener.onMove));
+    canvas.addEventListener('mouseup',   mouseHandler(canvas, listener.onEnd));
 }
 
 
@@ -494,8 +520,8 @@ function canvasCoords(canvas, pageX, pageY) {
             y: pageY - canvasBounds.top};
 }
 
-function mouseHandler(handler) {
-    return function(event) { handler(mouseCoords(event)); };
+function mouseHandler(canvas, handler) {
+    return function(event) { handler(mouseCoords(canvas, event)); };
 }
 
 function leftButtonOnly(handler) {
