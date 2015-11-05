@@ -27,22 +27,6 @@ function makeQuiver() {
 
     var arrows = [];
 
-    function add(XXX) {
-        // XXX
-    }
-
-    function makeConstantArrow(value, label) {
-        // XXX
-    }
-
-    function addFreeArrow(at) {
-        // XXX
-    }
-
-    function constructArrow(op, argument, target) {
-        return XXX;
-    }
-
     function serialize() {
         // XXX
         return '';
@@ -50,6 +34,11 @@ function makeQuiver() {
 
     function deserialize(params) {
         // XXX
+    }
+
+    function getLines() {
+        // XXX
+        return [];
     }
 
     function isEmpty() {
@@ -64,9 +53,20 @@ function makeQuiver() {
         return arrows.filter(XXX);
     }
 
-    function getLines() {
+    function add(XXX) {
         // XXX
-        return [];
+    }
+
+    function makeConstantArrow(value, label) {
+        // XXX
+    }
+
+    function addFreeArrow(at) {
+        // XXX
+    }
+
+    function constructArrow(op, argument, target) {
+        return XXX;
     }
 
     function onMove() {
