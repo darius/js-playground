@@ -4,6 +4,8 @@
 
 var maxClickDistance = 2;
 var minSelectionDistance = 20;
+var dotRadius = 3;
+var selectedDotRadius = 10;
 
 function onLoad() {
     var params = decodeParams(document.URL);
@@ -26,6 +28,10 @@ function makeQuiver() {
     var arrows = [];
 
     function add(XXX) {
+        // XXX
+    }
+
+    function addFreeArrow(at) {
         // XXX
     }
 
@@ -65,6 +71,7 @@ function makeQuiver() {
 
     var quiver = {
         add: add,
+        addFreeArrow: addFreeArrow,
         deserialize: deserialize, serialize: serialize,
         isEmpty: isEmpty,
         getArrows: getArrows,
@@ -109,6 +116,51 @@ function makeSheetUI(quiver, canvas, options, controls) {
         throw new Error("off-center sheet not supported yet");
     }
 
+    function drawDot(at, radius) {
+        ctx.beginPath();
+        ctx.arc(scale * at.re, scale * at.im, radius, 0, tau);
+        ctx.fill();
+    }
+
+    function drawText(at, text, textOffset) {
+        var x = at.re * scale + offset.x;
+        var y = at.im * scale + offset.y;
+        ctx.save();
+        ctx.scale(1, -1);
+        ctx.fillText(text, x, -y);
+        ctx.restore();
+    }
+
+    // Draw an arc from cnum u to uv.
+    // Assuming uv = u*v, it should approximate a logarithmic spiral
+    // similar to one from 1 to v.
+    function drawSpiralArc(u, v, uv) {
+        // Multiples of v^(1/8) as points on the spiral from 1 to v.
+        var h4 = roughSqrt(v);
+        var h2 = roughSqrt(h4);
+        var h1 = roughSqrt(h2);
+        var h3 = mul(h2, h1);
+        var h5 = mul(h4, h1);
+        var h6 = mul(h4, h2);
+        var h7 = mul(h4, h3);
+
+        var zs = [u,
+                  mul(u, h1),
+                  mul(u, h2),
+                  mul(u, h3),
+                  mul(u, h4),
+                  mul(u, h5),
+                  mul(u, h6),
+                  mul(u, h7),
+                  uv];
+        var path = [];
+        zs.forEach(function(z) {
+            path.push(scale * z.re);
+            path.push(scale * z.im);
+        });
+        drawSpline(ctx, path, 0.4, false);  // drawSpline(..., t, closed);
+    }
+
     var selection = [];
 
     function serialize() {
@@ -151,11 +203,13 @@ function makeSheetUI(quiver, canvas, options, controls) {
     }
 
     function showArrowSelected(arrow) {
-        // XXX
+        drawDot(arrow.at, selectedDotRadius);
     }
 
     function showArrow(arrow) {
-        // XXX
+        ctx.fillStyle = arrow.color;
+        drawDot(arrow.at, dotRadius);
+        drawText(arrow.at, arrow.label, arrow.labelOffset);
     }
 
     function showLine(line) {
@@ -202,22 +256,23 @@ function makeSheetUI(quiver, canvas, options, controls) {
        };
     }
 
-    function onClick(xy) {
-        var choice = pickPointedTo(xy, quiver.getArrows());
+    function onClick(at) {
+        var choice = pickPointedTo(at, quiver.getArrows());
         if (choice !== null) {
             toggleSelection(choice);
         } else {
-            addArrow(xy);
+            quiver.addFreeArrow(at);
         }
     }
 
-    function addArrow(xy) {
-        // XXX
-        quiver.add(XXX);
-    }
-
+    // Select arrow #i unless already selected, in which case unselect it.
     function toggleSelection(arrow) {
-        // XXX
+        assert(0 <= selection.length && selection.length <= 1);
+        if (arrow === selection[0]) {
+            selection = [];
+        } else {
+            selection = [arrow];
+        }
     }
 
     function makeMoverHand(startPoint, arrow) {
@@ -243,7 +298,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
             adding = offset;
         }
         function onStop() {
-            // XXX
+            perform(addOp, adding);
         }
         return {
             moveFromStart: moveFromStart,
@@ -265,7 +320,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
             multiplying = add(one, offset);
         }
         function onStop() {
-            // XXX
+            perform(mulOp, multiplying);
         }
         return {
             moveFromStart: moveFromStart,
@@ -276,16 +331,21 @@ function makeSheetUI(quiver, canvas, options, controls) {
             },
             show: function() {
                 ctx.strokeStyle = 'green';
-                spiralArc(one, multiplying, multiplying);
+                drawSpiralArc(one, multiplying, multiplying);
             }
         };
     }
 
-    function pickPointedTo(xy, arrows) {
+    function perform(op, at) {
+        var target = select(at, always(true));
+        // xXXX
+    }
+
+    function pickPointedTo(at, arrows) {
         var candidates = arrows.filter(function(arrow) {
-            return isCandidatePick(xy, arrow);
+            return isCandidatePick(at, arrow);
         });
-        return 0 < candidates.length ? pickClosestTo(xy, candidates) : null;
+        return 0 < candidates.length ? pickClosestTo(at, candidates) : null;
     }
 
     function chooseHand(at) {
@@ -424,4 +484,10 @@ function leftButtonOnly(handler) {
             handler(event);
         }
     };
+}
+
+function assert(claim) {
+    if (!claim) {
+        throw new Error("Liar");
+    }
 }
