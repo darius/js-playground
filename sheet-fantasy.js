@@ -11,7 +11,7 @@ function onLoad() {
     var params = decodeParams(document.URL);
     var quiver = makeQuiver();
     var ui = makeSheetUI(quiver, canvas,
-                         {xScale: 8,
+                         {realSpan: 8,
                           center: zero},
                          {undo: undoButton,
                           showArith: showarithCheckbox,
@@ -153,7 +153,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
     options = override({adding:      true,
                         center:      zero,
                         multiplying: true,
-                        xScale:      8},
+                        realSpan:    8},
                        options);
 
     var ctx    = canvas.getContext('2d');
@@ -163,7 +163,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
     var right  =  width/2;
     var bottom = -height/2;
     var top    =  height/2;
-    var scale  = width / options.xScale;
+    var scale  = width / options.realSpan;
 
     function pointFromXY(xy) {
         return {re: xy.x / scale, im: xy.y / scale};
