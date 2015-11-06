@@ -92,6 +92,9 @@ function makeQuiver() {
     return quiver;
 }
 
+var addOp = XXX;
+var multiplyOp = XXX;
+
 var tau = 2*Math.PI;
 
 // A sheet UI presents a quiver on a canvas, along with state
