@@ -100,14 +100,49 @@ function makeQuiver() {
 }
 
 var constantOp = {
-
+    color: 'blue',
+    labelOffset: {x: 0, y: 0},
+    label: function(arrow) {
+        var z = arrow.at;
+        if      (z.im === 0) return '' + z.re;
+        else if (z.re === 0) return '' + z.im + 'i';
+        else                 return '' + z.re + '+' + z.im + 'i';
+    },
+    recompute: noOp,
+    showProvenance: noOp,
 };
 
 var variableOp = {
-
+    color: 'black',
+    labelOffset: {x: 0, y: 0},
+    label: function(arrow, arrows) {
+        var freeArrows =
+            arrows.filter(function(arrow) { return arrow.op === variableOp; }); // XXX duplicate code
+        return String.fromCharCode(97 + freeArrows.length);
+    },
+    recompute: noOp,
+    showProvenance: noOp,
 };
 
-var addOp = XXX;
+var addOp = {
+    color: 'black',
+    labelOffset: {x: 0, y: 0},
+    label: function(arrow, arrows) {
+        if (arrow.arg1 === arrow.arg2) {
+            return '2' + parenthesize(arrow.arg1.label);
+        } else {
+            var L = parenthesize(arrow.arg0.label);
+            var R = parenthesize(arrow.arg1.label);
+            return L + '+' + R;
+        }
+    },
+    recompute: function(arrow) {
+
+    },
+    showProvenance: function(arrow, ctx, scale) {
+
+    },
+};
 var multiplyOp = XXX;
 
 var tau = 2*Math.PI;
