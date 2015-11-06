@@ -50,23 +50,30 @@ function makeQuiver() {
     }
 
     function getFreeArrows() {
-        return arrows.filter(XXX);
+        return arrows.filter(function(arrow) { return arrow.op === variableOp; });
     }
 
-    function add(XXX) {
-        // XXX
+    function add(arrow) {
+        arrow.label = arrow.op.label(arrow, arrows);
+        arrows.push(arrow);
+        recompute(arrow);
+        return arrow;
     }
 
-    function makeConstantArrow(value, label) {
-        // XXX
+    function makeConstantArrow(at) {
+        return add({op: constantOp, at: at});
     }
 
     function addFreeArrow(at) {
-        // XXX
+        return add({op: variableOp, at: value});
     }
 
-    function constructArrow(op, argument, target) {
-        return XXX;
+    function constructArrow(op, arg1, arg2) {
+        return add({op: op, arg1: arg1, arg2: arg2});
+    }
+
+    function moveTo(arrow, at) {
+        arrow.at = at;
     }
 
     function onMove() {
@@ -74,11 +81,10 @@ function makeQuiver() {
     }
 
     function recompute(arrow) {
-        // XXX
+        arrow.op.recompute(arrow);
     }
 
     var quiver = {
-        add: add,
         addFreeArrow: addFreeArrow,
         constructArrow: constructArrow,
         deserialize: deserialize, serialize: serialize,
@@ -87,10 +93,19 @@ function makeQuiver() {
         getFreeArrows: getFreeArrows,
         getLines: getLines,
         makeConstantArrow: makeConstantArrow,
+        moveTo: moveTo,
         onMove: onMove,
     };
     return quiver;
 }
+
+var constantOp = {
+
+};
+
+var variableOp = {
+
+};
 
 var addOp = XXX;
 var multiplyOp = XXX;
@@ -202,9 +217,9 @@ function makeSheetUI(quiver, canvas, options, controls) {
     }
 
     function showArrow(arrow) {
-        ctx.fillStyle = arrow.color;
+        ctx.fillStyle = arrow.op.color;
         drawDot(arrow.at, dotRadius);
-        drawText(arrow.at, arrow.label, arrow.labelOffset);
+        drawText(arrow.at, arrow.label, arrow.op.labelOffset);
     }
 
     function showLine(line) {
@@ -281,7 +296,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
     function makeMoverHand(startPoint, arrow) {
         var startAt = arrow.at;
         function moveFromStart(offset) {
-            arrow.moveTo(add(startAt, offset));
+            quiver.moveTo(arrow, add(startAt, offset));
         }
         function onMove() {
             quiver.onMove();
