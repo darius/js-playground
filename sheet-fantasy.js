@@ -248,9 +248,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
             strayed = strayed || maxClickDistance2 < distance2(zero, offset);
         }
         function onEnd() {
-            if (!strayed) {
-                onClick(at);
-            }
+            if (!strayed) onClick(at);
         }
         return {
             moveFromStart: moveFromStart,
@@ -270,7 +268,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
         }
     }
 
-    // Select arrow #i unless already selected, in which case unselect it.
+    // Select arrow unless already selected, in which case unselect it.
     function toggleSelection(arrow) {
         assert(0 <= selection.length && selection.length <= 1);
         if (arrow === selection[0]) {
