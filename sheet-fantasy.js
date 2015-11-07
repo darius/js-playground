@@ -121,7 +121,10 @@ var variableOp = {
         return String.fromCharCode(97 + freeArrows.length);
     },
     recompute: noOp,
-    showProvenance: noOp,
+    showProvenance: function(arrow, sheet) { // XXX fix the caller
+        sheet.drawLine(zero, arrow.at);
+        sheet.drawSpiral(one, arrow.at, arrow.at);
+    }
 };
 
 var addOp = {
@@ -131,19 +134,40 @@ var addOp = {
         if (arrow.arg1 === arrow.arg2) {
             return '2' + parenthesize(arrow.arg1.label);
         } else {
-            var L = parenthesize(arrow.arg0.label);
-            var R = parenthesize(arrow.arg1.label);
-            return L + '+' + R;
+            return infixLabel(arrow.arg1, '+', arrow.arg2);
         }
     },
     recompute: function(arrow) {
-
+        arrow.at = add(arrow.arg1, arrow.arg2);
     },
-    showProvenance: function(arrow, ctx, scale) {
-
+    showProvenance: function(arrow, sheet) {
+        sheet.drawLine(arrow.arg1, arrow.at);
     },
 };
-var multiplyOp = XXX;
+
+var multiplyOp = {
+    color: 'black',
+    labelOffset: {x: 0, y: 0},
+    label: function(arrow, arrows) {
+        if (arrow.arg1 === arrow.arg2) {
+            return parenthesize(arrow.arg1.label) + '^2';
+        } else {
+            return infixLabel(arrow.arg1, '', arrow.arg2);
+        }
+    },
+    recompute: function(arrow) {
+        arrow.at = mul(arrow.arg1, arrow.arg2);
+    },
+    showProvenance: function(arrow, sheet) {
+        sheet.drawSpiral(arrow.arg1, arrow.arg2, arrow.at);
+    },
+};
+
+function infixLabel(arg1, opLabel, arg2) {
+    var L = parenthesize(arg1.label);
+    var R = parenthesize(arg2.label);
+    return L + opLabel + R;
+}
 
 var tau = 2*Math.PI;
 
