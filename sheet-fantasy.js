@@ -99,85 +99,12 @@ function makeQuiver() {
     return quiver;
 }
 
-var constantOp = {
-    color: 'blue',
-    labelOffset: {x: 0, y: 0},
-    label: function(arrow) {
-        var z = arrow.at;
-        if      (z.im === 0) return '' + z.re;
-        else if (z.re === 0) return '' + z.im + 'i';
-        else                 return '' + z.re + '+' + z.im + 'i';
-    },
-    recompute: noOp,
-    showProvenance: noOp,
-};
-
-var variableOp = {
-    color: 'black',
-    labelOffset: {x: 0, y: 0},
-    label: function(arrow, arrows) {
-        var freeArrows =
-            arrows.filter(function(arrow) { return arrow.op === variableOp; }); // XXX duplicate code
-        return String.fromCharCode(97 + freeArrows.length);
-    },
-    recompute: noOp,
-    showProvenance: function(arrow, sheet) { // XXX fix the caller
-        sheet.drawLine(zero, arrow.at);
-        sheet.drawSpiral(one, arrow.at, arrow.at);
-    }
-};
-
-var addOp = {
-    color: 'black',
-    labelOffset: {x: 0, y: 0},
-    label: function(arrow, arrows) {
-        if (arrow.arg1 === arrow.arg2) {
-            return '2' + parenthesize(arrow.arg1.label);
-        } else {
-            return infixLabel(arrow.arg1, '+', arrow.arg2);
-        }
-    },
-    recompute: function(arrow) {
-        arrow.at = add(arrow.arg1, arrow.arg2);
-    },
-    showProvenance: function(arrow, sheet) {
-        sheet.drawLine(arrow.arg1, arrow.at);
-    },
-};
-
-var multiplyOp = {
-    color: 'black',
-    labelOffset: {x: 0, y: 0},
-    label: function(arrow, arrows) {
-        if (arrow.arg1 === arrow.arg2) {
-            return parenthesize(arrow.arg1.label) + '^2';
-        } else {
-            return infixLabel(arrow.arg1, '', arrow.arg2);
-        }
-    },
-    recompute: function(arrow) {
-        arrow.at = mul(arrow.arg1, arrow.arg2);
-    },
-    showProvenance: function(arrow, sheet) {
-        sheet.drawSpiral(arrow.arg1, arrow.arg2, arrow.at);
-    },
-};
-
-function infixLabel(arg1, opLabel, arg2) {
-    var L = parenthesize(arg1.label);
-    var R = parenthesize(arg2.label);
-    return L + opLabel + R;
-}
-
 var tau = 2*Math.PI;
 
-// A sheet UI presents a quiver on a canvas, along with state
-// and controls for seeing and manipulating the quiver.
-function makeSheetUI(quiver, canvas, options, controls) {
-    options = override({adding:      true,
-                        center:      zero,
-                        multiplying: true,
-                        realSpan:    8},
+function makeSheet(canvas, options) {
+    options = override({center:   zero,
+                        font:     '12pt Georgia',
+                        realSpan: 8},
                        options);
 
     var ctx    = canvas.getContext('2d');
@@ -192,8 +119,6 @@ function makeSheetUI(quiver, canvas, options, controls) {
     function pointFromXY(xy) {
         return {re: xy.x / scale, im: xy.y / scale};
     }
-    var minSelectionDistance2 = Math.pow(minSelectionDistance / scale, 2);
-    var maxClickDistance2     = Math.pow(maxClickDistance / scale, 2);
 
     ctx.font = font;
     ctx.translate(right, top);
@@ -201,6 +126,10 @@ function makeSheetUI(quiver, canvas, options, controls) {
 
     if (options.center.re !== 0 || options.center.im !== 0) {
         throw new Error("off-center sheet not supported yet");
+    }
+
+    function clear() {
+        ctx.clearRect(left, bottom, width, height);
     }
 
     function drawDot(at, radius) {
@@ -237,12 +166,67 @@ function makeSheetUI(quiver, canvas, options, controls) {
         drawSpline(ctx, path, 0.4, false);
     }
 
-    var sheet = {
+    function drawGrid() {
+        ctx.strokeStyle = 'grey';
+        ctx.lineWidth = 1;
+        for (i = 1; (i-1) * scale <= right; ++i) { // XXX hack
+            ctx.globalAlpha = .25;
+            for (j = 1; j <= 9; ++j) {
+                gridLines((i-1 + j/10) * scale, bottom, (i-1 + j/10) * scale, top);
+            }
+            ctx.globalAlpha = 1;
+            gridLines(i * scale, bottom, i * scale, top);
+        }
+        for (i = 1; (i-1) * scale <= top; ++i) { // XXX hack
+            ctx.globalAlpha = .25;
+            for (j = 1; j <= 9; ++j) {
+                gridLines(left, (i-1 + j/10) * scale, right, (i-1 + j/10) * scale);
+            }
+            ctx.globalAlpha = 1;
+            gridLines(left, i * scale, right, i * scale);
+        }
+
+        ctx.fillStyle = 'white';
+        ctx.fillRect(left, -1, width, 3);
+        ctx.fillRect(-1, bottom, 3, height);
+
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, scale, 0, tau, true);
+        ctx.closePath();
+        ctx.stroke();
+    }
+    
+    function translate(at) {
+        ctx.translate(at.re * scale, at.im * scale);
+    }
+
+    return {
+        clear: clear,
+        ctx: ctx,
         drawDot: drawDot,
-        drawText: drawText,
+        drawGrid: drawGrid,
         drawLine: drawLine,
         drawSpiral: drawSpiral,
+        drawText: drawText,
+        pointFromXY: pointFromXY,
+        translate: translate,
     };
+}
+
+
+// A sheet UI presents a quiver on a canvas, along with state
+// and controls for seeing and manipulating the quiver.
+function makeSheetUI(quiver, canvas, options, controls) {
+    options = override({adding:      true,
+                        multiplying: true},
+                       options);
+
+    var sheet = makeSheet(canvas, options);
+
+    var minSelectionDistance2 = Math.pow(minSelectionDistance / scale, 2); // XXX
+    var maxClickDistance2     = Math.pow(maxClickDistance / scale, 2);
 
     var selection = [];
 
@@ -258,11 +242,11 @@ function makeSheetUI(quiver, canvas, options, controls) {
 
     function show() {
         ctx.save();
-        ctx.clearRect(left, bottom, width, height);
+        sheet.clear();
 
         ctx.save();
         hand.dragGrid();
-        showGrid(ctx, width, height, left, bottom, right, top, scale);
+        sheet.showGrid();
         ctx.fillStyle = 'red';
         selection.forEach(showArrowSelected);
         ctx.restore();
@@ -286,13 +270,13 @@ function makeSheetUI(quiver, canvas, options, controls) {
     }
 
     function showArrowSelected(arrow) {
-        drawDot(arrow.at, selectedDotRadius);
+        sheet.drawDot(arrow.at, selectedDotRadius);
     }
 
     function showArrow(arrow) {
-        ctx.fillStyle = arrow.op.color;
-        drawDot(arrow.at, dotRadius);
-        drawText(arrow.at, arrow.label, arrow.op.labelOffset);
+        sheet.ctx.fillStyle = arrow.op.color;
+        sheet.drawDot(arrow.at, dotRadius);
+        sheet.drawText(arrow.at, arrow.label, arrow.op.labelOffset);
     }
 
     function showLine(line) {
@@ -366,67 +350,6 @@ function makeSheetUI(quiver, canvas, options, controls) {
         }
     }
 
-    function makeMoverHand(startPoint, arrow) {
-        var startAt = arrow.at;
-        function moveFromStart(offset) {
-            quiver.moveTo(arrow, add(startAt, offset));
-        }
-        function onMove() {
-            quiver.onMove();
-        }
-        return {
-            moveFromStart: moveFromStart,
-            onMove: onMove,
-            onEnd: onMove,     // TODO: add to the undo stack
-            dragGrid: noOp,
-            show: noOp,
-        };
-    }
-
-    function makeAddHand(startPoint) {
-        var adding = zero;
-        function moveFromStart(offset) {
-            adding = offset;
-        }
-        function onEnd() {
-            perform(addOp, adding);
-        }
-        return {
-            moveFromStart: moveFromStart,
-            onMove: noOp,
-            onEnd: onEnd,
-            dragGrid: function() {
-                ctx.translate(adding.re * scale, adding.im * scale);
-            },
-            show: function() {
-                ctx.strokeStyle = 'magenta';
-                drawLine(zero, adding);
-            }
-        };
-    }
-
-    function makeMultiplyHand(startPoint) {
-        var multiplying = one;
-        function moveFromStart(offset) {
-            multiplying = add(one, offset);
-        }
-        function onEnd() {
-            perform(mulOp, multiplying);
-        }
-        return {
-            moveFromStart: moveFromStart,
-            onMove: noOp,
-            onEnd: onEnd,
-            dragGrid: function() {
-                ctx.transform(multiplying.re, multiplying.im, -multiplying.im, multiplying.re, 0, 0);
-            },
-            show: function() {
-                ctx.strokeStyle = 'green';
-                drawSpiral(one, multiplying, multiplying);
-            }
-        };
-    }
-
     function perform(op, at) {
         var target = pickTarget(at, quiver.getArrows()); // TODO: also the constants
         if (target !== null) {
@@ -447,11 +370,11 @@ function makeSheetUI(quiver, canvas, options, controls) {
     function chooseHand(at) {
         var target = pickTarget(at, quiver.getFreeArrows());
         if (target !== null) {
-            return makeMoverHand(at, target);
+            return makeMoverHand(at, target, quiver);
         } else if (options.adding && isCandidatePick(at, zeroArrow)) {
-            return makeAddHand(at);
+            return makeAddHand(sheet, at, perform);
         } else if (options.multiplying && isCandidatePick(at, oneArrow)) {
-            return makeMultiplyHand(at);
+            return makeMultiplyHand(sheet, at, perform);
         } else {
             return makeNonHand(at);
         }
@@ -460,7 +383,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
     var hand = emptyHand;
     var handStartedAt;
 
-    var pointerListener = {
+    addPointerListener(canvas, {
         onStart: function(xy) {
             handStartedAt = pointFromXY(xy);
             hand = chooseHand(handStartedAt);
@@ -477,8 +400,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
             hand = emptyHand;
             show();
         },
-    };
-    addPointerListener(canvas, pointerListener);
+    });
 
     if (controls.undo) {
         controls.undo.addEventListener('click', asListener(undo));
@@ -491,43 +413,141 @@ function makeSheetUI(quiver, canvas, options, controls) {
         controls.showLines.addEventListener('click', asListener(show));
     }
 
-    var ui = {
+    return {
         deserialize: deserialize, serialize: serialize,
         show: show,
     };
-    return ui;
 }
 
-function showGrid(ctx, width, height, left, bottom, right, top, scale) {
-    ctx.strokeStyle = 'grey';
-    ctx.lineWidth = 1;
-    for (i = 1; (i-1) * scale <= right; ++i) { // XXX hack
-        ctx.globalAlpha = .25;
-        for (j = 1; j <= 9; ++j) {
-            gridLines((i-1 + j/10) * scale, bottom, (i-1 + j/10) * scale, top);
-        }
-        ctx.globalAlpha = 1;
-        gridLines(i * scale, bottom, i * scale, top);
-    }
-    for (i = 1; (i-1) * scale <= top; ++i) { // XXX hack
-        ctx.globalAlpha = .25;
-        for (j = 1; j <= 9; ++j) {
-            gridLines(left, (i-1 + j/10) * scale, right, (i-1 + j/10) * scale);
-        }
-        ctx.globalAlpha = 1;
-        gridLines(left, i * scale, right, i * scale);
-    }
+var constantOp = {
+    color: 'blue',
+    labelOffset: {x: 0, y: 0},
+    label: function(arrow) {
+        var z = arrow.at;
+        if      (z.im === 0) return '' + z.re;
+        else if (z.re === 0) return '' + z.im + 'i';
+        else                 return '' + z.re + '+' + z.im + 'i';
+    },
+    recompute: noOp,
+    showProvenance: noOp,
+};
 
-    ctx.fillStyle = 'white';
-    ctx.fillRect(left, -1, width, 3);
-    ctx.fillRect(-1, bottom, 3, height);
+var variableOp = {
+    color: 'black',
+    labelOffset: {x: 0, y: 0},
+    label: function(arrow, arrows) {
+        var freeArrows =
+            arrows.filter(function(arrow) { return arrow.op === variableOp; }); // XXX duplicate code
+        return String.fromCharCode(97 + freeArrows.length);
+    },
+    recompute: noOp,
+    showProvenance: function(arrow, sheet) { // XXX fix the caller
+        sheet.drawLine(zero, arrow.at);
+        sheet.drawSpiral(one, arrow.at, arrow.at);
+    }
+};
 
-    ctx.strokeStyle = 'white';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(0, 0, scale, 0, tau, true);
-    ctx.closePath();
-    ctx.stroke();
+function makeMoverHand(startPoint, arrow, quiver) {
+    var startAt = arrow.at;
+    function moveFromStart(offset) {
+        quiver.moveTo(arrow, add(startAt, offset));
+    }
+    function onMove() {
+        quiver.onMove();
+    }
+    return {
+        moveFromStart: moveFromStart,
+        onMove: onMove,
+        onEnd: onMove,     // TODO: add to the undo stack
+        dragGrid: noOp,
+        show: noOp,
+    };
+}
+
+function makeAddHand(sheet, startPoint, perform) {
+    var adding = zero;
+    function moveFromStart(offset) {
+        adding = offset;
+    }
+    function onEnd() {
+        perform(addOp, adding);
+    }
+    return {
+        moveFromStart: moveFromStart,
+        onMove: noOp,
+        onEnd: onEnd,
+        dragGrid: function() {
+            sheet.translate(adding);
+        },
+        show: function() {
+            sheet.ctx.strokeStyle = 'magenta';
+            sheet.drawLine(zero, adding);
+        }
+    };
+}
+
+var addOp = {
+    color: 'black',
+    labelOffset: {x: 0, y: 0},
+    label: function(arrow, arrows) {
+        if (arrow.arg1 === arrow.arg2) {
+            return '2' + parenthesize(arrow.arg1.label);
+        } else {
+            return infixLabel(arrow.arg1, '+', arrow.arg2);
+        }
+    },
+    recompute: function(arrow) {
+        arrow.at = add(arrow.arg1, arrow.arg2);
+    },
+    showProvenance: function(arrow, sheet) {
+        sheet.drawLine(arrow.arg1, arrow.at);
+    },
+};
+
+function makeMultiplyHand(sheet, startPoint, perform) {
+    var multiplying = one;
+    function moveFromStart(offset) {
+        multiplying = add(one, offset);
+    }
+    function onEnd() {
+        perform(mulOp, multiplying);
+    }
+    return {
+        moveFromStart: moveFromStart,
+        onMove: noOp,
+        onEnd: onEnd,
+        dragGrid: function() {
+            sheet.ctx.transform(multiplying.re, multiplying.im, -multiplying.im, multiplying.re, 0, 0);
+        },
+        show: function() {
+            sheet.ctx.strokeStyle = 'green';
+            sheet.drawSpiral(one, multiplying, multiplying);
+        }
+    };
+}
+
+var multiplyOp = {
+    color: 'black',
+    labelOffset: {x: 0, y: 0},
+    label: function(arrow, arrows) {
+        if (arrow.arg1 === arrow.arg2) {
+            return parenthesize(arrow.arg1.label) + '^2';
+        } else {
+            return infixLabel(arrow.arg1, '', arrow.arg2);
+        }
+    },
+    recompute: function(arrow) {
+        arrow.at = mul(arrow.arg1, arrow.arg2);
+    },
+    showProvenance: function(arrow, sheet) {
+        sheet.drawSpiral(arrow.arg1, arrow.arg2, arrow.at);
+    },
+};
+
+function infixLabel(arg1, opLabel, arg2) {
+    var L = parenthesize(arg1.label);
+    var R = parenthesize(arg2.label);
+    return L + opLabel + R;
 }
 
 function addPointerListener(canvas, listener) {
