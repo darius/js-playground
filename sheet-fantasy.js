@@ -211,6 +211,7 @@ function makeSheet(canvas, options) {
         drawSpiral: drawSpiral,
         drawText: drawText,
         pointFromXY: pointFromXY,
+        scale: scale,
         translate: translate,
     };
 }
@@ -225,8 +226,8 @@ function makeSheetUI(quiver, canvas, options, controls) {
 
     var sheet = makeSheet(canvas, options);
 
-    var minSelectionDistance2 = Math.pow(minSelectionDistance / scale, 2); // XXX
-    var maxClickDistance2     = Math.pow(maxClickDistance / scale, 2);
+    var minSelectionDistance2 = Math.pow(minSelectionDistance / sheet.scale, 2);
+    var maxClickDistance2     = Math.pow(maxClickDistance / sheet.scale, 2);
 
     var selection = [];
 
@@ -241,6 +242,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
     }
 
     function show() {
+        var ctx = sheet.ctx;
         ctx.save();
         sheet.clear();
 
