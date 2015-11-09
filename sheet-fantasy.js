@@ -72,10 +72,6 @@ function makeQuiver() {
         return add({op: op, arg1: arg1, arg2: arg2});
     }
 
-    function moveTo(arrow, at) {
-        arrow.at = at;
-    }
-
     function onMove() {
         arrows.forEach(recompute);
     }
@@ -452,7 +448,7 @@ var variableOp = {
 function makeMoverHand(startPoint, arrow, quiver) {
     var startAt = arrow.at;
     function moveFromStart(offset) {
-        quiver.moveTo(arrow, add(startAt, offset));
+        arrow.at = add(startAt, offset);
     }
     function onMove() {
         quiver.onMove();
