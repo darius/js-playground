@@ -209,6 +209,13 @@ function makeSheetUI(quiver, canvas, options, controls) {
         ctx.fill();
     }
 
+    function drawLine(at1, at2) {
+        ctx.beginPath();
+        ctx.moveTo(scale * at1.re, scale * at1.im);
+        ctx.lineTo(scale * at2.re, scale * at2.im);
+        ctx.stroke();
+    }
+
     // N.B. textOffset is in canvas (xy) coordinates.
     function drawText(at, text, textOffset) {
         var x = at.re * scale + offset.x;
@@ -220,7 +227,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
     }
 
     // Draw an arc from cnum u to uv (which should be u*v).
-    function drawSpiralArc(u, v, uv) {
+    function drawSpiral(u, v, uv) {
         var zs = computeSpiralArc(u, v, uv);
         var path = [];
         zs.forEach(function(z) {
@@ -229,6 +236,13 @@ function makeSheetUI(quiver, canvas, options, controls) {
         });
         drawSpline(ctx, path, 0.4, false);
     }
+
+    var sheet = {
+        drawDot: drawDot,
+        drawText: drawText,
+        drawLine: drawLine,
+        drawSpiral: drawSpiral,
+    };
 
     var selection = [];
 
@@ -267,7 +281,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
     }
 
     function showArrowAsMade(arrow) {
-        arrow.op.showProvenance(arrow, ctx, scale);
+        arrow.op.showProvenance(arrow, sheet);
         showArrow(arrow);
     }
 
@@ -408,7 +422,7 @@ function makeSheetUI(quiver, canvas, options, controls) {
             },
             show: function() {
                 ctx.strokeStyle = 'green';
-                drawSpiralArc(one, multiplying, multiplying);
+                drawSpiral(one, multiplying, multiplying);
             }
         };
     }
