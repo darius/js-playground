@@ -54,7 +54,7 @@ function makeQuiver() {
     }
 
     function add(arrow) {
-        arrow.label = arrow.op.label(arrow, arrows);
+        arrow.label = arrow.op.label(arrow, quiver);
         arrows.push(arrow);
         recompute(arrow);
         return arrow;
@@ -433,10 +433,8 @@ var constantOp = {
 var variableOp = {
     color: 'black',
     labelOffset: {x: 0, y: 0},
-    label: function(arrow, arrows) {
-        var freeArrows =
-            arrows.filter(function(arrow) { return arrow.op === variableOp; }); // XXX duplicate code
-        return String.fromCharCode(97 + freeArrows.length);
+    label: function(arrow, quiver) {
+        return String.fromCharCode(97 + quiver.getFreeArrows().length);
     },
     recompute: noOp,
     showProvenance: function(arrow, sheet) { // XXX fix the caller
@@ -487,7 +485,7 @@ function makeAddHand(sheet, startPoint, perform) {
 var addOp = {
     color: 'black',
     labelOffset: {x: 0, y: 0},
-    label: function(arrow, arrows) {
+    label: function(arrow) {
         if (arrow.arg1 === arrow.arg2) {
             return '2' + parenthesize(arrow.arg1.label);
         } else {
@@ -527,7 +525,7 @@ function makeMultiplyHand(sheet, startPoint, perform) {
 var multiplyOp = {
     color: 'black',
     labelOffset: {x: 0, y: 0},
-    label: function(arrow, arrows) {
+    label: function(arrow) {
         if (arrow.arg1 === arrow.arg2) {
             return parenthesize(arrow.arg1.label) + '^2';
         } else {
