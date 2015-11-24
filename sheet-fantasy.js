@@ -533,7 +533,7 @@ var multiplyOp = {
         }
     },
     recompute: function(arrow) {
-        arrow.at = mul(arrow.arg1, arrow.arg2);
+        arrow.at = mul(arrow.arg1.at, arrow.arg2.at);
     },
     showProvenance: function(arrow, sheet) {
         sheet.drawSpiral(arrow.arg1, arrow.arg2, arrow.at);
