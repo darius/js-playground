@@ -37,10 +37,10 @@ function onLoad() {
     window.addEventListener('keydown', onKeydown, false);
 
     lastTime = nowInSeconds();
-    smoothedRate = targetCps;
+    smoothedRate = 0;
 
     events.push({t: lastTime,
-                 wpm: wpmOfCps(targetCps)});
+                 wpm: wpmOfCps(smoothedRate)});
 }
 
 function wpmOfCps(cps) {
