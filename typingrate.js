@@ -91,3 +91,42 @@ function coords(now, e) {
     return {x: width-1 - scrollRate * (now - e.t),
             y: heightOfWpm(e.wpm)};
 }
+
+/*
+TODO:
+ * parameterize by averaging-timescale instead of target-rate
+ * keep events-to-graph in a cyclic buffer, and drop old entries
+ * make a little module reusable for frame-rate averaging and such
+ * label keystrokes on the graph
+ * add scales to the axes
+
+My old comments on the Emacs Lisp version of this follow.
+
+;; Track the recent typing rate to see whether it exceeds a target rate, using
+;; a method vaguely like https://en.wikipedia.org/wiki/Exponential_smoothing
+
+;; Here's the scheme: We keep track of a smoothed rate. Each keystroke
+;; increases it by 1; each second that passes multiplies it by a decay
+;; factor less than 1. To deal with noninteger time intervals, the
+;; decaying actually happens smoothly as an exponential in time.
+
+;; This method has the disadvantage that the estimated rate just after
+;; a keystroke is always >=1, which is 60/5 = 12wpm. The lower the
+;; target rate, the more this bias matters. (I guess we could address
+;; this by doing the same kind of computation in a different time
+;; unit, such as minutes instead of seconds. Then the bias would be 1
+;; keystroke/minute instead of /second. This is equivalent to keeping
+;; seconds for our time unit but bumping by a smaller constant than 1
+;; on each keystroke. It comes down to how much you want to weight the
+;; recent data vs. the older.)
+
+;; So what's the decay factor? If the user types at the target rate r,
+;; then in an interval of 1/r the decay k should be such that k r + 1 = r.
+;; So k = 1/(1-r).
+
+;; The decay factor for a whole second is k^r (that is, at a rate of
+;; 1/r there'd be r occasions when we'd multiply by k).
+
+;; Thus the decay factor for an arbitrary interval t is (k^r)^t = k^(r t).
+
+*/
