@@ -78,11 +78,10 @@ function tick() {
 
 function curve(p0, p1) {
     const k = decay(1/scrollRate);
-    let x = p0.x;
     let y = p0.y;
-    for (let x1 = x+1; x1 < p1.x; ++x1) {
+    for (let x = p0.x+1; x < p1.x; ++x) {
         y *= k;
-        ctx.lineTo(x1, y);
+        ctx.lineTo(x, y);
     }
     ctx.lineTo(p1.x, p1.y);
 }
