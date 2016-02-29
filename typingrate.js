@@ -2,8 +2,7 @@
 
 const width  = canvas.width;
 const height = canvas.height;
-
-const ctx = canvas.getContext('2d');
+const ctx    = canvas.getContext('2d');
 
 const targetCps = 5.0;
 const scrollRate = 100;  // pixels/second
@@ -56,13 +55,15 @@ function nowInSeconds() {
 }
 
 function tick() {
+    ctx.clearRect(0, 0, width, height);
+    drawCurve();
+}
+
+function drawCurve() {
     const now = nowInSeconds();
     const wpm = wpmOfCps(decaySmoothedRate(now));
 
-    ctx.clearRect(0, 0, width, height);
-
     ctx.beginPath();
-
     let p0 = coords(now, events[0]);
     ctx.moveTo(p0.x, p0.y);
     for (let i = 1; i < events.length; ++i) {
@@ -72,7 +73,6 @@ function tick() {
     }
     const p = coords(now, {t: now, wpm: wpm});
     curve(p0, p);
-
     ctx.stroke();
 }
 
