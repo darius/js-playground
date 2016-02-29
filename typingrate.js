@@ -56,7 +56,20 @@ function nowInSeconds() {
 
 function tick() {
     ctx.clearRect(0, 0, width, height);
+    drawScale();
     drawCurve();
+}
+
+function drawScale() {
+    for (let wpm = 0; wpm < 160; wpm += 10) {
+        const y = heightOfWpm(wpm);
+        ctx.fillRect(0, y, width, .5);
+        ctx.save();
+        ctx.scale(1, -1); // Argh: make the text come out unmirrored.
+        ctx.textAlign = 'right';
+        ctx.fillText(wpm, 25, -(y+5));
+        ctx.restore();
+    }
 }
 
 function drawCurve() {
