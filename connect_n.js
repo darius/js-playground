@@ -10,3 +10,13 @@ function makeBoard() {
     for (let i = 0; i < ncols; ++i) cols.push([]);
     return cols;
 }
+
+// Mutate the board: drop the piece into the column.
+function drop(board, col, piece) {
+    board[col].append(piece);
+}
+
+// Return an ASCII representation of the board.
+function show(board) {
+
+}
