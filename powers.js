@@ -83,10 +83,13 @@ canvas.addEventListener('click', onClick);
 function onMousemove(event) {
     cancelAnimationFrame(nextFrame);
     var z = pointingAt(event);
-    if (refPoint)
-        z = add(rmul(19/20, refPoint),
-                rmul( 1/20, z));
+    if (refPoint) z = lerp(refPoint, 1/50, z);
     show(z);
+}
+
+function lerp(tail, how_far, head) {
+    return add(rmul(1-how_far, tail),
+               rmul(how_far, head));
 }
 
 canvas.addEventListener('mousemove', onMousemove);
