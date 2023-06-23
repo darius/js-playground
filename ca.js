@@ -29,7 +29,7 @@
 // - write circles and squares into the grid
 // - bitwise operations on grids
 // - documentation
-// - use coffeescript
+// - more convenient scripting language than JS?
 // - nicer API, less clumsy for quick hacks
 // - better editor for the textareas
 // - try a non-tabular rule implementation
@@ -55,6 +55,7 @@
 // the letters; Ctrl + Enter, Shift + Space, Ctrl + Space; Ctrl
 // + <some punctuation marks>.
 // http://forums.adobe.com/message/3413706
+// - 2023 update: ctrl-Y not working, at least on Firefox
 
 
 // The grid
